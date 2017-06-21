@@ -11,6 +11,11 @@
 
     <properties>
         <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
+        <resteasy.version>3.0.8.Final</resteasy.version>
+        <resteasy.scope>compile</resteasy.scope>        
+        <compileSource>1.7</compileSource>
+        <maven.compiler.target>1.7</maven.compiler.target>
+        <maven.compiler.source>1.7</maven.compiler.source>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
     
@@ -33,6 +38,37 @@
             <version>7.0</version>
             <scope>provided</scope>
         </dependency>
+        <!-- Jersey multipart dependency -->
+        <!-- dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-multipart</artifactId>
+            <version>1.8</version>
+        </dependency -->
+        
+        <!-- RESTEasy JAX RS Implementation -->
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jaxrs</artifactId>
+            <version>${resteasy.version}</version>
+            <scope>${resteasy.scope}</scope>
+        </dependency>
+ 
+        <!-- Resteasy Multipart Provider -->
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-multipart-provider</artifactId>
+            <version>${resteasy.version}</version>
+            <scope>${resteasy.scope}</scope>
+        </dependency>
+ 
+        <!-- Resteasy Servlet Container Initializer -->
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-servlet-initializer</artifactId>
+            <version>${resteasy.version}</version>
+            <scope>${resteasy.scope}</scope>
+        </dependency>      
+       
     </dependencies>
 
     <build>

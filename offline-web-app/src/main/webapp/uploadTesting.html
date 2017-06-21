@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <title>Comalat : File Upload</title>
+    </head>
+    <body>
+    <center>
+        <h4>Comalat Upload Testing</h4>
+
+        <p> Rest link: offline-web-app/comalat/languages/upload</p>
+        <div style="width: 400px; border: 1px solid blue; padding: 20px; text-align: center;">
+            <form method="post" action="comalat/languages/upload" enctype="multipart/form-data">
+                <table align="center" border="1" cellpadding="0" cellspacing="0">
+                    <tr align="center">Select Zip File for uploading</tr>
+                    <tr>
+                        <td><input type="text" name="langName" placeholder="language"/></td>
+                        <td><input type="file" name="uploadFile" size="100" /></td>
+                    </tr>
+                    <tr>
+                        <td align="center"><input type="submit" value="Upload File" /></td>
+                        <td align="right"><input type="reset" value="Reset" /></td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+    </center>
+</body>
+</html>
