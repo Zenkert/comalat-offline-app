@@ -4,7 +4,8 @@ package comalat.Application.Domain;
  *
  * @author SyleSakis
  */
-public interface SizeHandler {
+public interface FolderInfoHandler {
 
     public long getSize();
+    public Object readFromFolder(String sourcePath);
 }

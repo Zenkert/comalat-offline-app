@@ -1,23 +1,23 @@
 package comalat.Services.FolderServices;
 
-import comalat.Application.Exception.DataNotFoundException;
 import comalat.Constants;
+import comalat.Application.Exception.ServerProcedureException;
 import java.io.File;
+import java.io.FileFilter;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.FileVisitResult;
-import static java.nio.file.FileVisitResult.CONTINUE;
-import static java.nio.file.FileVisitResult.TERMINATE;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.SimpleFileVisitor;
-import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.nio.file.FileVisitResult;
+import static java.nio.file.FileVisitResult.CONTINUE;
+import static java.nio.file.FileVisitResult.TERMINATE;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -31,15 +31,13 @@ public class FolderManager {
      * Delete a folder or file.
      *
      * @param source A String absolute path of folder/file.
-     * @return true or false
-     * @throws IOException if something go wrong.
+     * @throws ServerProcedureException if something goes wrong.
      *
      */
-    public static boolean delete(String source) {
+    public static void delete(String source) {
         Path directory = Paths.get(source);
-        Path path = null;
         try {
-            path = Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
+            Files.walkFileTree(directory, new SimpleFileVisitor<Path>() {
                 @Override
                 public FileVisitResult visitFile(final Path file, final BasicFileAttributes attrs)
                         throws IOException {
@@ -69,10 +67,31 @@ public class FolderManager {
             });
         } catch (IOException ex) {
             Logger.getLogger(FolderManager.class.getName()).log(Level.SEVERE, null, ex);
-            //IO exception
+            delete(source);
         }
+    }
 
-        return Files.notExists(path);
+    /**
+     * Delete all contents of a folder.
+     *
+     * @param source A String absolute path of folder.
+     * @throws ServerProcedureException if something goes wrong.
+     *
+     */
+    public static boolean deleteAll(String source) {
+        File directory = null;
+        try {
+            directory = new File(source);
+        } catch (NullPointerException ex) {
+            return false;
+        }
+        if (directory.listFiles().length > 0) {
+            for (File folder : directory.listFiles()) {
+                delete(folder.getAbsolutePath());
+            }
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -81,7 +100,7 @@ public class FolderManager {
      * @param source The path of folder/file.
      * @param destination The destination where the folder will be copy.
      * @SubMethods copyDirectory, copyFile.
-     * @throws GeneralServerProcessException if something go wrong.
+     * @throws GeneralServerProcessException if something goes wrong.
      * @throws InformationException if destination folder/file exist.
      *
      */
@@ -136,43 +155,54 @@ public class FolderManager {
     /**
      * Save file to server.
      *
-     * @param destination Where the file we be created.
      * @param in InputStream.
+     * @param destination Where the file we be created.
      * @param filename File's name.
-     * @throws DataNotFoundException if folder/file does not exist in the source
-     * folder.
+     * @throws ServerProcedureException if something goes wrong.
      *
      */
-    public static void saveUploadedFile(String destination, InputStream in, String filename) {
-
-        OutputStream out = null;
-        String pathfile = Paths.get(destination, filename).toString();
+    public static void saveUploadedFile(InputStream in, String destination, String filename) {
+        File dir = new File(destination);
+        if (!dir.exists()) {
+            dir.mkdir();
+        }
+        File upload = new File(Paths.get(destination, filename).toString());
 
         try {
-            out = new FileOutputStream(new File(pathfile));
-
-            byte[] buffer = new byte[Constants.BUFFER_SIZE];
-            int length;
-            while ((length = in.read(buffer)) != -1) {
-                out.write(buffer, 0, length);
-            }
-            out.flush();
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(FolderManager.class.getName()).log(Level.SEVERE, null, ex);
-            // Server service Exception
+            Files.copy(in, upload.toPath());
         } catch (IOException ex) {
-            Logger.getLogger(FolderManager.class.getName()).log(Level.SEVERE, null, ex);
-            // Server service Exception
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
+            throw new ServerProcedureException("Server procedure error. Please try later!");
+        }
+    }
+
+    /**
+     * Check if a PDF file exist and return the PDF file name.
+     *
+     * @param source The path of folder/file.
+     * @return PDF file name.
+     *
+     */
+    public static String getFileName(String source) {
+        File directory = null;
+        try {
+            directory = new File(source);
+        } catch (NullPointerException ex) {
+            return null;
+        }
+        if (directory.exists()) {
+            for (File file : directory.listFiles(new FileFilter() {
+                @Override
+                public boolean accept(File pathname) {
+                    if (pathname.isFile() && pathname.getName().endsWith(Constants.PDF_FORMAT)) {
+                        return true;
+                    }
+                    return false;
                 }
-            } catch (IOException ex) {
-                Logger.getLogger(FolderManager.class.getName()).log(Level.SEVERE, null, ex);
-                // Server service Exception
+            })) {
+                return file.getName();
             }
         }
+        return null;
     }
 
     /**
@@ -181,21 +211,23 @@ public class FolderManager {
      * @param source The path of folder/file.
      * @param target The name of folder/file that we are looking for.
      * @return The absolute path of folder/file.
-     * @throws DataNotFoundException if folder/file does not exist in the source
      *
      */
     public static final String getPath(String source, String target) {
-        File directory = new File(source);
+        File directory = null;
+        try {
+            directory = new File(source);
+        } catch (NullPointerException ex) {
+            return null;
+        }
         if (directory.exists()) {
-            for (String filename : directory.list()) {
-                if (filename.toUpperCase().equals(target.toUpperCase())) {
-                    //System.out.println("-----------PATH---------------- " + Paths.get(source, filename).toString());
-                    //System.out.println("---FILENAME------- " + filename + " |");
-                    return Paths.get(source, filename).toString();
+            for (String foldername : directory.list()) {
+                if (foldername.equalsIgnoreCase(target)) {
+                    return Paths.get(source, foldername).toString();
                 }
             }
         }
-        throw new DataNotFoundException("Can not find folder/file " + "{" + target + "}");
+        return null;
     }
 
     /**
@@ -207,10 +239,15 @@ public class FolderManager {
      *
      */
     public static final boolean exist(String source, String target) {
-        File directory = new File(source);
+        File directory = null;
+        try {
+            directory = new File(source);
+        } catch (NullPointerException ex) {
+            return false;
+        }
         if (directory.exists()) {
             for (String filename : directory.list()) {
-                if (filename.toUpperCase().equals(target.toUpperCase())) {
+                if (filename.equalsIgnoreCase(target)) {
                     return true;
                 }
             }

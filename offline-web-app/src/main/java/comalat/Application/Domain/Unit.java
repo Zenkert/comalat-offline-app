@@ -1,28 +1,44 @@
 package comalat.Application.Domain;
 
 import comalat.Application.Domain.Enum.Skill;
+import comalat.Constants;
+import comalat.Services.FileServices.PDFManager;
 import java.io.File;
+import java.io.FileFilter;
 import java.util.List;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
  * @author SyleSakis
  */
-class Unit implements SizeHandler{
+@XmlRootElement
+class Unit implements FolderInfoHandler {
 
+    @XmlElement(name = "Unit")
+    private String unitName;
     private String unitContents;
     private List<Skill> exercisedSkills;
-    private List<File> files;
+    private File file;
 
     public Unit() {
     }
 
-    public Unit(String unitContents, List<Skill> exercisedSkills, List<File> files) {
+    public Unit(String unitName, String unitContents, List<Skill> exercisedSkills, File file) {
+        this.unitName = unitName;
         this.unitContents = unitContents;
         this.exercisedSkills = exercisedSkills;
-        this.files = files;
+        this.file = file;
     }
 
+    @XmlElement(name = "Skills")
+    public List<String> getExercisedSkillsValue() {
+        return Skill.convertSkillstoValues(this.exercisedSkills);
+    }
+
+    @XmlTransient
     public List<Skill> getExercisedSkills() {
         return exercisedSkills;
     }
@@ -31,6 +47,7 @@ class Unit implements SizeHandler{
         this.exercisedSkills = exercisedSkills;
     }
 
+    @XmlElement(name = "Contents")
     public String getUnitContents() {
         return unitContents;
     }
@@ -39,24 +56,61 @@ class Unit implements SizeHandler{
         this.unitContents = unitContents;
     }
 
-    public List<File> getFile() {
-        return files;
+    public void setUnitContents(String[] unitsContents) {
+        try {
+            String tmp = unitName.replace("unit", "");
+            int column = Integer.parseInt(tmp);
+            column = (column-1) % 5;
+
+            this.unitContents = unitsContents[column];
+        } catch (NumberFormatException ex) {
+            return;
+        }
     }
 
-    public void setFile(List<File> file) {
-        this.files = file;
+    public String getUnitName() {
+        return unitName;
     }
 
-    public void addFile(File file) {
-        files.add(file);
+    public void setUnitName(String unitName) {
+        this.unitName = unitName;
+    }
+
+    @XmlElement(name = "File")
+    public String getFileName() {
+        return file.getName();
+    }
+
+    @XmlTransient
+    public File getFile() {
+        return file;
+    }
+
+    public void setFile(File file) {
+        this.file = file;
     }
 
     @Override
+    @XmlElement(name = "size")
     public long getSize() {
-        long size = 0;
-        for (File file : files) {
-            size += file.length();
+        return file.length();
+    }
+
+    @Override
+    //sourcePath = */Comalat-Folders/comalat-pdf-files/{langName}/{levelType}/{courses-x-y}/{unitz}
+    public Unit readFromFolder(String sourcePath) {
+        File directory = new File(sourcePath);
+        this.unitName = directory.getName();
+        for (File pdfFile : directory.listFiles(new FileFilter() {
+            @Override
+            public boolean accept(File pathname) {
+                return (pathname.getPath().endsWith(Constants.PDF_FORMAT)
+                        && pathname.isFile());
+            }
+        })) {
+            this.file = pdfFile;
+            this.setExercisedSkills(PDFManager.getSkills(file));
         }
-        return size;
+        return this;
     }
 }

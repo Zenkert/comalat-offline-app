@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Get Methods</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    </head>
+    <body>
+        <h1>GET Method Examples</h1>
+        <h4>1</h4>
+        <div style="width: auto; border: 1px solid blue; padding: 10px;">
+            Resource: */comalat/languages |Resources.Languages |Server -> http://localhost:8080
+            <br>Return Zip with all languages.
+            <p>
+                <a href="http://localhost:8080/offline-web-app/comalat/languages"><b>/offline-web-app/comalat/languages</b></a>
+            </p>
+        </div>
+        
+        <h4>2</h4>
+        <div style="width: auto; border: 1px solid yellowgreen; padding: 10px;">
+            Resource */comalat/languages/{lang} |Resources.Languages |Server -> http://localhost:8080
+            <br>Return Zip with English language.
+            <p>
+                <a href="http://localhost:8080/offline-web-app/comalat/languages/english"><b>/offline-web-app/comalat/languages/english</b></a>
+            </p>
+        </div>
+        
+        <h4>3</h4>
+        <div style="width: auto; border: 1px solid red; padding: 10px;">
+            Resource: */comalat/languages/{lang}/levels/{lvl} |Resources.Levels |Server -> http://localhost:8080
+            <br>Return Zip English's education level: elementary.
+            <p>
+                <a href="http://localhost:8080/offline-web-app/comalat/languages/levels/elementary">
+                    <b>/offline-web-app/comalat/languages/elementary</b></a>
+            </p>
+        </div>
+    
+        <h4>4</h4>
+        <div style="width: auto; border: 1px solid green; padding: 10px;">
+            Resource: */comalat/languages/{lang}/levels/{lvl}/courses/{coursesXY} |Resources.Courses |Server -> http://localhost:8080
+            <br>Return Zip English's courses: courses-1-5.
+            <p>
+                <a href="http://localhost:8080/offline-web-app/comalat/languages/english/levels/elementary/courses/courses-1-5">
+                    <b>/offline-web-app/comalat/languages/english/levels/elementary/courses/courses-1-5</b></a>
+            </p>
+        </div>
+        
+        <h4>5</h4>
+        <div style="width: auto; border: 1px solid purple; padding: 10px;">
+            Resource: */comalat/languages/{lang}/levels/{lvl}/courses/{coursesXY}/units/{unit} |Resources.Courses |Server -> http://localhost:8080
+            <br>Return PDF Engish's unit: unit4.
+            <p>
+                <a href="http://localhost:8080/offline-web-app/comalat/languages/english/levels/elementary/courses/courses-1-5/units/unit4">
+                    <b>/offline-web-app/comalat/languages/english/levels/elementary/courses/courses-1-5/units/unit4</b></a>
+            </p>
+        </div>
+        
+        <h4>6</h4>
+        <div style="width: auto; border: 1px solid black; padding: 10px;">
+            Resource: */comalat/languages/{lang} |Resources.Courses |Server -> http://localhost:8080
+            <br>Return Error Json format.
+            <p>
+                <a href="http://localhost:8080/offline-web-app/comalat/languages/not-exist-folder">
+                    <b>/offline-web-app/comalat/languages/not-exist-folder</b></a>
+            </p>
+        </div>
+        
+    </body>
+</html>
