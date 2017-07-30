@@ -125,7 +125,7 @@ public class ClientGET {
         WebTarget unitTarget = courseTarget.path("units/{unit}");
 
         System.out.println("\n..........Starting GET Unit..........");
-        String language = "english"; // language
+        String language = "spanish"; // language
         String lvl = "elementary"; // elementary or intermediate
         String courseName = "courses-1-5"; // courses-{X}-{Y} x -> 1,6,11,16 & y -> 5,10,15,20
         String unitName = "unit1"; // unit{X} x -> 1-20

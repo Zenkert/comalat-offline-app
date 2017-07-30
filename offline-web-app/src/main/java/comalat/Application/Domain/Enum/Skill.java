@@ -35,6 +35,9 @@ public enum Skill {
     
     public static List<String> convertSkillstoValues(List<Skill> skills){
         List<String> strSkills = new ArrayList<>();
+        if(skills == null){
+            return null;
+        }
         for(Skill skill : skills){
             strSkills.add(skill.toString());
         }

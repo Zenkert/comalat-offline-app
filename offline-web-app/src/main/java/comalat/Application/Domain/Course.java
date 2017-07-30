@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 /**
  *
@@ -17,7 +18,12 @@ class Course implements FolderInfoHandler {
 
     @XmlElement(name = "Course")
     private String courseName;
+    @XmlElement(name = "Units")
     private List<Unit> units;
+    @XmlTransient
+    private int noUnits=0;
+    @XmlTransient
+    private long lastupdate = 0;
 
     public Course() {
         units = new ArrayList<>();
@@ -64,6 +70,7 @@ class Course implements FolderInfoHandler {
         File directory = new File(sourcePath);
         File contents = null;
         this.courseName = directory.getName();
+        lastupdate = directory.lastModified();
 
         for (File folder : directory.listFiles(new FileFilter() {
             @Override
@@ -85,14 +92,32 @@ class Course implements FolderInfoHandler {
                 return pathname.isDirectory();
             }
         })) {
-
             Unit unit = new Unit();
             unit = unit.readFromFolder(folder.getPath());
             unit.setUnitContents(WordManager.readTable(contents));
+            noUnits += unit.getNoOfUnits();
+            setLastUpdate(unit.getLastUpdate());
             units.add(unit);
 
         }
         return this;
+    }
+
+    @Override
+    public int getNoOfUnits() {
+        return noUnits;
+    }
+
+    @Override
+    @XmlTransient
+    public long getLastUpdate() {
+        return lastupdate;
+    }
+    
+    public void setLastUpdate(long update) {
+        if(update > lastupdate){
+            lastupdate = update;
+        }
     }
 
 }

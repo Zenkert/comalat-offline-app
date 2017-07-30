@@ -1,0 +1,114 @@
+
+.ng-view{
+    height: 100%;
+}
+
+#loginPanel {
+    position: absolute;
+    margin: 0px;
+    padding: 0px;
+    top: 30%;
+    right: 35%;
+    height: 50%;
+    width: 30%;
+}
+
+#loginPanel input {
+    height: 44px;
+}
+
+#myModal {
+    position: fixed;
+    margin: 0px;
+    padding: 0px;
+    top: 25%;
+    right: 35%;
+    height: 100%;
+    width: 100%;
+}
+
+#myModal input {
+    height: 44px;
+}
+
+#uploadfile {
+    padding: 0px;
+    padding-right: 5px;
+    border-left-width: 0px;
+    cursor: pointer;
+}
+
+.loadingbar {
+    position: fixed;
+    top: 20%;
+    left: 50%;
+    transform: translate(-20%, -50%);
+    z-index: 1000;
+}
+
+.message {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+}
+
+.lang {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.CRUD {
+    float: right;
+    margin: 0px;
+}
+
+.CRUD i span {
+    margin-left: 2px;    
+}
+
+.create span {
+    padding-right: 5px;
+}
+
+.get, .delete, .put, .create, #filePDF{
+    cursor:pointer;
+}
+
+.showhide {
+    float: right;
+    margin: 0px;
+    padding: 0px;
+    cursor:pointer;
+}
+
+.no-bullets {
+    list-style-type: none;
+}
+
+.copyright p { text-align:left; color:#FFF; padding:10px 0; margin-bottom:0px;}
+.bottom_ul { list-style-type:none; float:right; margin-bottom:0px;}
+.bottom_ul li { float:left; line-height:40px;}
+.bottom_ul li:after { content:"/"; color:#FFF; margin-right:8px; margin-left:8px;}
+.bottom_ul li a { color:#FFF;  font-size:12px;}
+
+#filePDF:hover{
+    color: red;
+}
+
+.create:hover {
+    color:darkgreen;
+}
+
+.get:hover {
+    color: black;
+}
+
+.delete:hover {
+    color: red;
+}
+
+.put:hover {
+    color: cyan;
+}

@@ -1,0 +1,223 @@
+<div ng-init="init()">
+    <div class="jumbotron container" style="text-align: center">
+        <h2>COMALAT-API</h2>
+        <p>something</p>
+    </div>
+
+    <!-- loading -->
+    <div class="loadingbar">
+        <img ng-show="dataloading" src="img/gif/loadingbar.gif" alt=""/>
+    </div>
+    
+    <div class="message">
+        <div class="alert alert-info" ng-show=info.flag>
+            <strong>Info!</strong> {{info.message}} <i ng-if="info.documentation != ''"><br><strong> Documentation!</strong> {{info.documentation}}</i>
+        </div>
+        <div class="alert alert-danger" ng-show=error.flag>
+            <strong>Error!</strong> {{error.message}} <i ng-if="error.documentation != ''"><br><strong>Documentation!</strong> {{error.documentation}}</i>
+        </div>
+    </div>
+    <div class="container-fluid" ng-style="{'opacity': dataloading ? 0.3 : 1}">
+        <div class="row">
+            <div ng-repeat="language in languages" class="lang col-sm-12 col-md-6 col-lg-{{largeView}} panel panel-primary">
+                <div class="panel-heading container-fluid">
+                    <span class=" text-capitalize fa fa-graduation-cap fa-2x" aria-hidden="true"> {{ language.Language}}</span>
+                    <div class="CRUD">
+                        <i data-toggle="tooltip" data-placement="top" title="Download">
+                            <span class="get fa fa-download" aria-hidden="true" ng-click="getMethod(language.Language, null, null, null)"></span></i>
+                        <i data-toggle="tooltip" data-placement="top" title="Delete">
+                            <span class="delete fa fa-trash-o" aria-hidden="true" ng-click="deleteMethod(language.Language, null, null, null)"></span></i>
+                        <i data-toggle="tooltip" data-placement="top" title="Update">
+                            <span class="put fa fa-pencil-square-o" aria-hidden="true" ng-click="putMethod(language.Language, null, null, null)" data-toggle="modal" data-target="#myModal"></span></i>
+                    </div> 
+                </div>
+                <div class="panel-group" style="margin-bottom: 10px;">
+                    <div class="panel panel-info">
+                        <div class="panel-heading">
+                            <p>
+                                <strong>#Units:</strong> {{language.noUnits}}
+                                <i class="fa fa-info fa-2x" aria-hidden="true" style="float: right">nfo</i>
+                            </p>
+                            <p><strong>Size:</strong> {{language.size| MegaByte}} MB</p>
+                            <p><strong>Last update:</strong> {{language.LastUpdate}}
+                                <i class="showhide">
+                                    <i data-toggle="tooltip" data-placement="top" title="show">
+                                        <span class="glyphicon glyphicon-option-horizontal" ng-click="show_hide(language.Language)" ng-if="!(selectedLang === language.Language && show)"></span>
+                                    </i>
+                                    <i data-toggle="tooltip" data-placement="top" title="hide">
+                                        <span class="glyphicon glyphicon-option-vertical" ng-click="show_hide(language.Language)" ng-if="(selectedLang === language.Language && show)"></span>
+                                    </i>
+                                </i>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="panel panel-default" ng-if="selectedLang === language.Language && show">
+                        <div class="panel-heading">
+                            <ul class="list-unstyled" style="margin-bottom: 0px;">
+                                <li ng-repeat="level in language.EducationLevels">
+                                    <div>
+                                        <span class="fa fa-folder-open fa-2x" aria-hidden="true"></span>
+                                        <strong>{{level.EducationLevel}}</strong>
+                                        <div class="CRUD">
+                                            <i data-toggle="tooltip" data-placement="top" title="Download">
+                                                <span class="get fa fa-download" aria-hidden="true" ng-click="getMethod(language.Language, level.EducationLevel, null, null)"></span></i>
+                                            <i data-toggle="tooltip" data-placement="top" title="Delete">
+                                                <span class="delete fa fa-trash-o" aria-hidden="true" ng-click="deleteMethod(language.Language, level.EducationLevel, null, null)"></span></i>
+                                            <i data-toggle="tooltip" data-placement="top" title="Update">
+                                                <span class="put fa fa-pencil-square-o" aria-hidden="true" ng-click="putMethod(language.Language, level.EducationLevel, null, null)" data-toggle="modal" data-target="#myModal"></span></i>
+                                        </div>
+                                    </div>
+                                    <ul class="no-bullets">
+                                        <li ng-repeat="course in level.Courses">
+                                            <div>
+                                                <span class="fa fa-level-down fa-2x" aria-hidden="true"></span><strong>{{course.Course}}</strong>
+                                                <div class="CRUD">
+                                                    <i data-toggle="tooltip" data-placement="top" title="Download">
+                                                        <span class="get fa fa-download" aria-hidden="true" ng-click="getMethod(language.Language, level.EducationLevel, course.Course, null)"></span></i>
+                                                    <i data-toggle="tooltip" data-placement="top" title="Delete">
+                                                        <span class="delete fa fa-trash-o" aria-hidden="true" ng-click="deleteMethod(language.Language, level.EducationLevel, course.Course, null)"></span></i>
+                                                    <i data-toggle="tooltip" data-placement="top" title="Update">
+                                                        <span class="put fa fa-pencil-square-o" aria-hidden="true" ng-click="putMethod(language.Language, level.EducationLevel, course.Course, null)" data-toggle="modal" data-target="#myModal"></span></i>
+                                                </div> 
+                                            </div>
+                                            <ul class="no-bullets">
+                                                <li ng-repeat="unit in course.Units">
+                                                    <div>
+                                                        <span class="fa fa-level-down" aria-hidden="true"></span><strong>{{unit.Unit}}</strong> <small>({{unit.size| KiloByte}} KB)</small>
+                                                        <div class="CRUD">
+                                                            <i data-toggle="tooltip" data-placement="top" title="Download">
+                                                                <span class="get fa fa-download" aria-hidden="true" ng-click="getMethod(language.Language, level.EducationLevel, course.Course, unit.Unit)"></span></i>
+                                                            <i data-toggle="tooltip" data-placement="top" title="Delete">
+                                                                <span class="delete fa fa-trash-o" aria-hidden="true" ng-click="deleteMethod(language.Language, level.EducationLevel, course.Course, unit.Unit)"></span></i>
+                                                            <i data-toggle="tooltip" data-placement="top" title="Update">
+                                                                <span class="put fa fa-pencil-square-o" aria-hidden="true" ng-click="putMethod(language.Language, level.EducationLevel, course.Course, unit.Unit)" data-toggle="modal" data-target="#myModal"></span></i>
+                                                        </div>
+                                                    </div>
+                                                    <ul class="no-bullets">
+                                                        <li>
+                                                            <div data-role="collapsible-set" class="collapsed" data-toggle="collapse" data-target="#{{unit.Unit| removeSpaces}}">
+                                                                <span class="fa fa-file-pdf-o" aria-hidden="true" style="color: red"></span>
+                                                                <em id="filePDF" data-toggle="tooltip" data-placement="top" title="Information">{{unit.File}}</em>
+                                                                <div id="{{unit.Unit|removeSpaces}}" class="collapse">
+                                                                    <div class="panel panel-info">
+                                                                        <div class="panel-heading" style="margin: 0px; padding: 0px">
+                                                                            <p class="text-center" style="margin: 0px; padding: 0px"><strong>Skills</strong></p>
+                                                                        </div>
+                                                                        <div class="panel-body" style="margin: 0px; padding: 0px">
+                                                                            <ul class="list-unstyled">
+                                                                                <li class="col-md-6" ng-repeat="skill in unit.Skills">
+                                                                                    <span class="fa fa-square" aria-hidden="true" style="padding-right: 3px"></span>{{skill}}
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                        <div class="panel-heading" style="margin: 0px; padding: 0px">
+                                                                            <p class="text-center" style="margin: 0px; padding: 0px"><strong>Contents</strong></p>
+                                                                        </div>
+                                                                        <div class="panel-body" style="margin: 0px; padding: 0px">
+                                                                            <ul class="list-unstyled" style="padding-left: 3px">
+                                                                                <li ng-repeat="content in unit.Contents">
+                                                                                    <span class="fa fa-dot-circle-o" aria-hidden="true" style="padding-right: 3px"></span>{{content}}
+                                                                                </li>
+                                                                            </ul>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+                                                <li>
+                                                    <i data-toggle="tooltip" data-placement="top" title="Upload">
+                                                        <i class="create" data-toggle="modal" data-target="#myModal" ng-click="postMethod(language.Language, level.EducationLevel, course.Course)">
+                                                            <span class="fa fa-upload" aria-hidden="true"></span><strong>Upload Unit</strong>
+                                                        </i>
+                                                    </i>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                        <li>
+                                            <i data-toggle="tooltip" data-placement="top" title="Upload">
+                                                <i class="create" data-toggle="modal" data-target="#myModal" ng-click="postMethod(language.Language, level.EducationLevel, null)">
+                                                    <span class="fa fa-upload fa-2x" aria-hidden="true"></span><strong>Upload Course</strong>
+                                                </i>
+                                            </i>
+                                        </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <i data-toggle="tooltip" data-placement="top" title="Upload">
+                                        <i class="create" data-toggle="modal" data-target="#myModal" ng-click="postMethod(language.Language, null, null)">
+                                            <span class="fa fa-upload fa-2x" aria-hidden="true"></span><strong>Upload Education Level</strong>
+                                        </i>
+                                    </i>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lang panel panel-success col-sm-12 col-md-6 col-lg-{{largeView}}">
+                <div class="panel-heading container-fluid ">
+                    <span class="fa fa-graduation-cap fa-2x" aria-hidden="true">New Language</span>
+                    <i data-toggle="tooltip" data-placement="top" title="Upload">
+                        <span class="create fa fa-upload fa-2x" aria-hidden="true" ng-click="postMethod(null, null, null)" data-toggle="modal" data-target="#myModal" style="float: right;"></span>
+                    </i>
+                </div>
+                <div class="panel-body"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade in" id="myModal" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h2 class="modal-title">{{action_method}} {{objName}}</h2>
+                </div>
+                <form name="form" role="form">
+                    <div class="modal-body">
+
+                        <div class="form-group" ng-class="{'has-error': form.name.$dirty && form.name.$error.required }">
+                            <div class="input-group">
+                                <span class="input-group-addon"><i class="fa fa-file fa-2x" aria-hidden="true"></i></span>
+                                <input type="text" name="name" id="name" class="form-control" placeholder="{{objName}} name" ng-disabled="(action_method == 'Update')" ng-model="name" required/>
+                            </div>
+                            <span ng-show="form.name.$dirty && form.name.$error.required" class="help-block">{{objName}} name is required</span>
+                        </div>
+
+                        <div class="form-group" ng-class="{'has-error': form.uploadfile.$dirty && form.uploadfile.$error.required }">
+                            <label for="uploadfile">File</label>
+                            <div class="input-group">
+                                <input type="file" id="uploadfile" class="form-control" accept="{{format}}" file-model="uploadfile" required />
+                                <span class="input-group-addon">
+                                    <i data-toggle="tooltip" data-placement="top" title="ZIP file">
+                                        <i class="fa fa-file-archive-o fa-2x" aria-hidden="true" ng-if="(format == '.zip')"></i>
+
+                                    </i>
+                                    <i data-toggle="tooltip" data-placement="top" title="PDF file">
+                                        <i class="fa fa-file-pdf-o fa-2x" style="color: red;" aria-hidden="true" ng-if="(format == '.pdf')"></i>
+
+                                    </i>
+                                </span> 
+                            </div>
+                            <span ng-show="form.uploadfile.$dirty && form.uploadfile.$error.required" class="help-block">A file is required</span>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="form-actions">
+                            <img ng-if="datamodalloading" src="img/gif/snake34.gif" alt=""/>
+                            <button type="submit" ng-disabled="form.$invalid || datamodalloading" class="btn btn-primary" ng-click="submit()">{{action_method}}</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+
+        </div>
+    </div>
+</div>  

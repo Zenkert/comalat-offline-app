@@ -1,4 +1,4 @@
-package comalat.Application.Domain;
+package comalat.Application.Domain.ResponseMessage;
 
 import javax.xml.bind.annotation.XmlRootElement;
 

@@ -26,7 +26,30 @@ import java.util.logging.Logger;
  * @author SyleSakis
  */
 public class FolderManager {
-
+    
+    /**
+     * Create main folders.
+     *
+     * @param source A String absolute path of folder/file.
+     * @throws ServerProcedureException if something goes wrong.
+     *
+     */
+    public static void createMainFolders() {
+        
+        if(!Paths.get(Constants.SOURCE_FOLDER).toFile().exists()){
+            Paths.get(Constants.SOURCE_FOLDER).toFile().mkdirs();
+        }
+        
+        if(!Paths.get(Constants.DOWNLOAD_FOLDER).toFile().exists()){
+            Paths.get(Constants.DOWNLOAD_FOLDER).toFile().mkdirs();
+        }
+        
+        if(!Paths.get(Constants.UPLOAD_FOLDER).toFile().exists()){
+            Paths.get(Constants.UPLOAD_FOLDER).toFile().mkdirs();
+        }
+        
+    }
+    
     /**
      * Delete a folder or file.
      *

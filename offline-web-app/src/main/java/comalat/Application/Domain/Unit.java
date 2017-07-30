@@ -5,6 +5,8 @@ import comalat.Constants;
 import comalat.Services.FileServices.PDFManager;
 import java.io.File;
 import java.io.FileFilter;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -19,14 +21,18 @@ class Unit implements FolderInfoHandler {
 
     @XmlElement(name = "Unit")
     private String unitName;
-    private String unitContents;
+    private String[] unitContents = new String[4];
     private List<Skill> exercisedSkills;
     private File file;
+    @XmlTransient
+    private int noUnits = 0;
+    @XmlTransient
+    private long lastupdate = 0;
 
     public Unit() {
     }
 
-    public Unit(String unitName, String unitContents, List<Skill> exercisedSkills, File file) {
+    public Unit(String unitName, String[] unitContents, List<Skill> exercisedSkills, File file) {
         this.unitName = unitName;
         this.unitContents = unitContents;
         this.exercisedSkills = exercisedSkills;
@@ -48,22 +54,25 @@ class Unit implements FolderInfoHandler {
     }
 
     @XmlElement(name = "Contents")
-    public String getUnitContents() {
+    public String[] getUnitContents() {
         return unitContents;
     }
 
-    public void setUnitContents(String unitContents) {
+    public void setUnitContents(String[] unitContents) {
         this.unitContents = unitContents;
     }
 
-    public void setUnitContents(String[] unitsContents) {
+    public void setUnitContents(List<String[]> unitsContents) {
         try {
-            String tmp = unitName.replace("unit", "");
-            int column = Integer.parseInt(tmp);
-            column = (column-1) % 5;
+            String name = unitName.replaceAll("\\D+","");
+            String col = unitName.replace("unit", "");
+            int column = Integer.parseInt(name);
+            column = (column - 1) % 5;
 
-            this.unitContents = unitsContents[column];
+            this.unitContents = unitsContents.get(column);
         } catch (NumberFormatException ex) {
+            return;
+        } catch (NullPointerException ex) {
             return;
         }
     }
@@ -78,6 +87,9 @@ class Unit implements FolderInfoHandler {
 
     @XmlElement(name = "File")
     public String getFileName() {
+        if (file == null) {
+            return "EMPTY";
+        }
         return file.getName();
     }
 
@@ -93,7 +105,10 @@ class Unit implements FolderInfoHandler {
     @Override
     @XmlElement(name = "size")
     public long getSize() {
-        return file.length();
+        if (file != null) {
+            return file.length();
+        }
+        return 0;
     }
 
     @Override
@@ -101,6 +116,8 @@ class Unit implements FolderInfoHandler {
     public Unit readFromFolder(String sourcePath) {
         File directory = new File(sourcePath);
         this.unitName = directory.getName();
+        setLastUpdate(directory.lastModified());
+
         for (File pdfFile : directory.listFiles(new FileFilter() {
             @Override
             public boolean accept(File pathname) {
@@ -108,9 +125,33 @@ class Unit implements FolderInfoHandler {
                         && pathname.isFile());
             }
         })) {
+            noUnits = 1;
             this.file = pdfFile;
             this.setExercisedSkills(PDFManager.getSkills(file));
         }
         return this;
+    }
+
+    @Override
+    public int getNoOfUnits() {
+        return noUnits;
+    }
+
+    @Override
+    @XmlTransient
+    public long getLastUpdate() {
+        return lastupdate;
+    }
+
+    public void setLastUpdate(long update) {
+        if (update > lastupdate) {
+            lastupdate = update;
+        }
+    }
+
+    @XmlElement(name = "Update")
+    private String getModified() {
+        SimpleDateFormat df = new SimpleDateFormat("HH:mm dd//MM/yyyy");
+        return new String(df.format(new Date(lastupdate)));
     }
 }

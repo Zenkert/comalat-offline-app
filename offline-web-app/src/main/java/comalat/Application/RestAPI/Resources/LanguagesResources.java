@@ -1,7 +1,7 @@
 package comalat.Application.RestAPI.Resources;
 
 import comalat.Constants;
-import comalat.Application.Domain.SuccessMessage;
+import comalat.Application.Domain.ResponseMessage.SuccessMessage;
 import comalat.Application.Exception.ConflictException;
 import comalat.Application.Exception.DataNotFoundException;
 import comalat.Application.Exception.InvalidInputException;
@@ -55,13 +55,13 @@ public class LanguagesResources {
         
         String zipname = foldername + serialNo + Constants.ZIP_FORMAT;
 
-        CompressManager.Compression(Constants.SOURCE_FOLDER, Constants.DESTINATION_DOWNLOAD_FOLDER, zipname);
-        File file = new File(Paths.get(Constants.DESTINATION_DOWNLOAD_FOLDER, zipname).toString());
+        CompressManager.Compression(Constants.SOURCE_FOLDER, Constants.DOWNLOAD_FOLDER, zipname);
+        File file = new File(Paths.get(Constants.DOWNLOAD_FOLDER, zipname).toString());
         
-        return Response.status(Status.OK)
-                .type(MediaType.APPLICATION_OCTET_STREAM)
+        return Response.ok(file, MediaType.APPLICATION_OCTET_STREAM)
                 .header("Content-Disposition", "attachment; filename=\"Languages.zip\"")
-                .entity(file)
+                .header("x-zipfilename", file.getName())
+                .header("x-fileformat", Constants.ZIP_FORMAT)
                 .build();
     }
 
@@ -94,10 +94,12 @@ public class LanguagesResources {
             throw new DataNotFoundException("Can not find folder/file " + "{" + lang + "}");
         }
 
-        CompressManager.Compression(path, Constants.DESTINATION_DOWNLOAD_FOLDER, zipname);
-        File file = new File(Paths.get(Constants.DESTINATION_DOWNLOAD_FOLDER, zipname).toString());
+        CompressManager.Compression(path, Constants.DOWNLOAD_FOLDER, zipname);
+        File file = new File(Paths.get(Constants.DOWNLOAD_FOLDER, zipname).toString());
         return Response.ok(file, MediaType.APPLICATION_OCTET_STREAM)
                 .header("Content-Disposition", "attachment; filename=\"" + lang + Constants.ZIP_FORMAT + "\"")
+                .header("x-zipfilename", file.getName())
+                .header("x-fileformat", Constants.ZIP_FORMAT)
                 .build();
     }
     
@@ -125,7 +127,7 @@ public class LanguagesResources {
     public Response uploadFile(
             @FormDataParam("uploadFile") InputStream in,
             @FormDataParam("uploadFile") FormDataContentDisposition info,
-            @FormDataParam("langName") String filename,
+            @FormDataParam("name") String filename,
             @HeaderParam("serialNo") long serialNo) {
 
         if (serialNo == 0) {
@@ -149,8 +151,8 @@ public class LanguagesResources {
         }
         filename = filename.concat("_"+serialNo+Constants.ZIP_FORMAT);
         
-        FolderManager.saveUploadedFile(in, Constants.DESTINATION_UPLOAD_FOLDER, filename);
-        CompressManager.Decompression(Constants.DESTINATION_UPLOAD_FOLDER, Constants.SOURCE_FOLDER, filename);
+        FolderManager.saveUploadedFile(in, Constants.UPLOAD_FOLDER, filename);
+        CompressManager.Decompression(Constants.UPLOAD_FOLDER, Constants.SOURCE_FOLDER, filename);
         
         SuccessMessage message = new SuccessMessage("Upload "+info.getFileName(), Status.CREATED.getStatusCode());
         return Response.status(Status.CREATED).entity(message).build();
@@ -163,7 +165,7 @@ public class LanguagesResources {
     public Response updateFile(
             @FormDataParam("uploadFile") InputStream in,
             @FormDataParam("uploadFile") FormDataContentDisposition info,
-            @FormDataParam("langName") String filename,
+            @FormDataParam("name") String filename,
             @HeaderParam("serialNo") long serialNo) {
 
         if (serialNo == 0) {
@@ -183,11 +185,11 @@ public class LanguagesResources {
         filename = filename.replace(" ", "");
         filename = filename.concat("_"+serialNo+Constants.ZIP_FORMAT);
         
-        FolderManager.saveUploadedFile(in, Constants.DESTINATION_UPLOAD_FOLDER, filename);
+        FolderManager.saveUploadedFile(in, Constants.UPLOAD_FOLDER, filename);
         if (FolderManager.getPath(Constants.SOURCE_FOLDER, langName) != null) {
             FolderManager.delete(FolderManager.getPath(Constants.SOURCE_FOLDER, langName));
         }
-        CompressManager.Decompression(Constants.DESTINATION_UPLOAD_FOLDER, Constants.SOURCE_FOLDER, filename);
+        CompressManager.Decompression(Constants.UPLOAD_FOLDER, Constants.SOURCE_FOLDER, filename);
         
         SuccessMessage message = new SuccessMessage("Updated "+info.getFileName(), Status.OK.getStatusCode());
         return Response.status(Status.OK).entity(message).build();

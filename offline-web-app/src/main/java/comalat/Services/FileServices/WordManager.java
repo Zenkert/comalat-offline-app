@@ -6,8 +6,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.ArrayList;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.Range;
@@ -25,13 +24,15 @@ import org.apache.poi.xwpf.usermodel.XWPFTable;
  */
 public class WordManager {
 
-    public static String[] readTable(File file) {
+    public static List<String[]> readTable(File file) {
         FileInputStream fis = null;
         InputStream fisdoc = null;
-        String[] contents = new String[5];
+        List<String[]> contents = null;
         try {
             fis = new FileInputStream(file.getAbsolutePath());
         } catch (FileNotFoundException ex) {
+            return null;
+        } catch (NullPointerException ex) {
             return null;
         }
 
@@ -68,58 +69,62 @@ public class WordManager {
         return contents;
     }
 
-    private static String[] readTableXWPF(XWPFDocument document) {
+    private static List<String[]> readTableXWPF(XWPFDocument document) {
         List<XWPFTable> tables = document.getTables();
-        String tmp = "";
-        String[] cont = new String[5];
+        List<String[]> listcont = new ArrayList<>();
         XWPFTable table = tables.get(0);
 
         for (int j = 1; j < 6; j++) {
+            String[] tmp = new String[4];
             for (int i = 2; i < table.getNumberOfRows(); i++) {
                 if (table.getRow(i).getCell(j) != null) {
-                    tmp += (table.getRow(i).getCell(0).getText() + " : "
-                            + table.getRow(i).getCell(j).getText() + System.getProperty("line.separator")).replaceAll("\t", " ").trim();
-
+                    tmp[i - 2] = new String();
+                    tmp[i - 2] = table.getRow(i).getCell(0).getText() + " : " + table.getRow(i).getCell(j).getTextRecursively().replaceAll("\t", " ");
                 }
             }
-            cont[j - 1] = tmp.trim();
-            tmp = "";
+            listcont.add(tmp);
         }
 
         /*
-        for (int q = 0; q < 5; q++) {
-            System.out.println(cont[q]);
-        }
+        for (String[] str : listcont) {
+            System.out.println("-------------Unit:");
+            for (String str2 : str) {
+                System.out.println("-------------------ITEM: \n" + str2);
+            }
+        } 
          */
-        return cont;
+        return listcont;
     }
 
-    private static String[] readTableHWPF(HWPFDocument document) {
-
-        String tmp = "";
-        String[] cont = new String[5];
+    private static List<String[]> readTableHWPF(HWPFDocument document) {
+        List<String[]> listcont = new ArrayList<>();
         Range range = document.getRange();
         TableIterator itr = new TableIterator(range);
         while (itr.hasNext()) {
             Table table = itr.next();
             for (int j = 1; j < 6; j++) {
+                String[] tmp2 = new String[4];
                 for (int i = 2; i < table.numRows(); i++) {
+                    tmp2[i - 2] = new String();
                     TableRow row = table.getRow(i);
-                    tmp += row.getCell(0).getParagraph(0).text() + " : ";
+                    tmp2[i - 2] = row.getCell(0).getParagraph(0).text().replaceAll("\\u0007", "") + " : ";
                     for (int p = 0; p < row.getCell(j).numParagraphs(); p++) {
-                        tmp += row.getCell(j).getParagraph(p).text() + System.getProperty("line.separator");
+                        tmp2[i - 2] += row.getCell(j).getParagraph(p).text().replaceAll("\t", " ").replaceAll("\r", " ").replaceAll("\\u0007", "");
                     }
                 }
-                cont[j - 1] = tmp;
-                tmp = "";
+                listcont.add(tmp2);
             }
         }
+
         /*
-        for (int q = 0; q < 5; q++) {
-            System.out.println(cont[q]);
-        }
-         */
-        return cont;
+        for (String[] str : listcont) {
+            System.out.println("-------------Unit:");
+            for (String str2 : str) {
+                System.out.println("-------------------ITEM: \n" + str2);
+            }
+        } 
+        */
+        return listcont;
     }
 
 }

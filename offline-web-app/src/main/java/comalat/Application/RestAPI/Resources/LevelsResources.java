@@ -1,7 +1,7 @@
 package comalat.Application.RestAPI.Resources;
 
 import comalat.Constants;
-import comalat.Application.Domain.SuccessMessage;
+import comalat.Application.Domain.ResponseMessage.SuccessMessage;
 import comalat.Application.Exception.ConflictException;
 import comalat.Application.Exception.DataNotFoundException;
 import comalat.Application.Exception.InvalidInputException;
@@ -64,10 +64,12 @@ public class LevelsResources {
             throw new DataNotFoundException("Can not find folder/file " + "{" + lvl + "} at folder {" + lang + "}");
         }
 
-        CompressManager.Compression(path, Constants.DESTINATION_DOWNLOAD_FOLDER, zipname);
-        File file = new File(Paths.get(Constants.DESTINATION_DOWNLOAD_FOLDER, zipname).toString());
+        CompressManager.Compression(path, Constants.DOWNLOAD_FOLDER, zipname);
+        File file = new File(Paths.get(Constants.DOWNLOAD_FOLDER, zipname).toString());
         return Response.ok(file, MediaType.APPLICATION_OCTET_STREAM)
                 .header("Content-Disposition", "attachment; filename=\"" + tmpname + Constants.ZIP_FORMAT + "\"")
+                .header("x-zipfilename", file.getName())
+                .header("x-fileformat", Constants.ZIP_FORMAT)
                 .build();
     }
 
@@ -99,7 +101,7 @@ public class LevelsResources {
     public Response uploadFile(
             @FormDataParam("uploadFile") InputStream in,
             @FormDataParam("uploadFile") FormDataContentDisposition info,
-            @FormDataParam("lvlName") String filename,
+            @FormDataParam("name") String filename,
             @PathParam("lang") String lang,
             @HeaderParam("serialNo") long serialNo) {
 
@@ -125,8 +127,8 @@ public class LevelsResources {
         }
         filename = filename.concat("_" + serialNo + Constants.ZIP_FORMAT);
 
-        FolderManager.saveUploadedFile(in, Constants.DESTINATION_UPLOAD_FOLDER, filename);
-        CompressManager.Decompression(Constants.DESTINATION_UPLOAD_FOLDER, source, filename);
+        FolderManager.saveUploadedFile(in, Constants.UPLOAD_FOLDER, filename);
+        CompressManager.Decompression(Constants.UPLOAD_FOLDER, source, filename);
 
         SuccessMessage message = new SuccessMessage("Upload " + info.getFileName(), Status.CREATED.getStatusCode());
         return Response.status(Status.CREATED).entity(message).build();
@@ -140,7 +142,7 @@ public class LevelsResources {
     public Response updateFile(
             @FormDataParam("uploadFile") InputStream in,
             @FormDataParam("uploadFile") FormDataContentDisposition info,
-            @FormDataParam("lvlName") String filename,
+            @FormDataParam("name") String filename,
             @PathParam("lang") String lang,
             @HeaderParam("serialNo") long serialNo) {
 
@@ -161,11 +163,11 @@ public class LevelsResources {
         String source = FolderManager.getPath(Constants.SOURCE_FOLDER, lang);
         filename = filename.concat("_" + serialNo + Constants.ZIP_FORMAT);
 
-        FolderManager.saveUploadedFile(in, Constants.DESTINATION_UPLOAD_FOLDER, filename);
+        FolderManager.saveUploadedFile(in, Constants.UPLOAD_FOLDER, filename);
         if (FolderManager.getPath(source, lvlName) != null) {
             FolderManager.delete(FolderManager.getPath(source, lvlName));
         }
-        CompressManager.Decompression(Constants.DESTINATION_UPLOAD_FOLDER, source, filename);
+        CompressManager.Decompression(Constants.UPLOAD_FOLDER, source, filename);
 
         SuccessMessage message = new SuccessMessage("Updated " + info.getFileName(), Status.CREATED.getStatusCode());
         return Response.status(Status.OK).entity(message).build();

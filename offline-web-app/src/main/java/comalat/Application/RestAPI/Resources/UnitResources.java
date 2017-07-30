@@ -1,7 +1,7 @@
 package comalat.Application.RestAPI.Resources;
 
 import comalat.Constants;
-import comalat.Application.Domain.SuccessMessage;
+import comalat.Application.Domain.ResponseMessage.SuccessMessage;
 import comalat.Application.Exception.DataNotFoundException;
 import comalat.Application.Exception.ConflictException;
 import comalat.Application.Exception.InvalidInputException;
@@ -60,6 +60,8 @@ public class UnitResources {
         File file = new File(Paths.get(source, filename).toString());
         return Response.ok(file, MediaType.APPLICATION_OCTET_STREAM)
                 .header("Content-Disposition", "attachment; filename=\"" + filename + "\"")
+                .header("x-pdffilename", file.getName())
+                .header("x-fileformat", Constants.PDF_FORMAT)
                 .build();
     }
 
@@ -93,7 +95,7 @@ public class UnitResources {
     public Response uploadFile(
             @FormDataParam("uploadFile") InputStream in,
             @FormDataParam("uploadFile") FormDataContentDisposition info,
-            @FormDataParam("unitName") String unit,
+            @FormDataParam("name") String unit,
             @PathParam("lang") String lang,
             @PathParam("lvl") String lvl,
             @PathParam("coursesXY") String coursesXY) {
@@ -131,7 +133,7 @@ public class UnitResources {
     public Response updateFile(
             @FormDataParam("uploadFile") InputStream in,
             @FormDataParam("uploadFile") FormDataContentDisposition info,
-            @FormDataParam("unitName") String unit,
+            @FormDataParam("name") String unit,
             @PathParam("lang") String lang,
             @PathParam("lvl") String lvl,
             @PathParam("coursesXY") String coursesXY) {

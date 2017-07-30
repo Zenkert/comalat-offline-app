@@ -9,8 +9,8 @@ import java.nio.file.Paths;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
-import javax.ws.rs.HeaderParam;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -36,9 +36,10 @@ public class DataResources {
     }
     
     @DELETE
-    public Response deleteDownLoadedZip(@HeaderParam("zipFileName") String zipFileName){
+    @Path("/{zipfilename}")
+    public Response deleteDownLoadedZip(@PathParam("zipfilename") String zipFileName){
         if(zipFileName != null){
-            String source = Paths.get(Constants.DESTINATION_DOWNLOAD_FOLDER, zipFileName).toString();
+            String source = Paths.get(Constants.DOWNLOAD_FOLDER, zipFileName).toString();
             FolderManager.delete(source);
             return Response.status(Status.NO_CONTENT).build();
         }
