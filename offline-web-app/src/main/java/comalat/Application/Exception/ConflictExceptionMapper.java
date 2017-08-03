@@ -15,7 +15,7 @@ public class ConflictExceptionMapper implements ExceptionMapper<ConflictExceptio
 
     @Override
     public Response toResponse(ConflictException ex) {
-        ErrorMessage errorMessage = new ErrorMessage(ex.getMessage(), Status.CONFLICT.getStatusCode(), "Documentation");
+        ErrorMessage errorMessage = new ErrorMessage(ex.getMessage(), Status.CONFLICT.getStatusCode(), null);
         return Response.status(Status.CONFLICT)
                 .entity(errorMessage)
                 .build();

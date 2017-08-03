@@ -1,6 +1,7 @@
 package comalat.Application.RestAPI.Resources;
 
 import comalat.Constants;
+import comalat.Application.Domain.ResponseMessage.ErrorMessage;
 import comalat.Application.Domain.ResponseMessage.SuccessMessage;
 import comalat.Application.Exception.ConflictException;
 import comalat.Application.Exception.DataNotFoundException;
@@ -72,9 +73,11 @@ public class LanguagesResources {
     public Response deleteAllLangauges() {
         
         if(!FolderManager.deleteAll(Constants.SOURCE_FOLDER)){
-            return Response.status(Status.NOT_FOUND).build();
+            ErrorMessage em = new ErrorMessage("Main folder does not exist", Status.NOT_FOUND.getStatusCode(), null);
+            return Response.status(Status.NOT_FOUND).entity(em).build();
         }
-        return Response.status(Status.OK).build();
+        SuccessMessage sm = new SuccessMessage("Main folder successfully deleted", Status.OK.getStatusCode(), null);
+        return Response.status(Status.OK).entity(sm).build();
     }
 
     // get a language
@@ -113,10 +116,12 @@ public class LanguagesResources {
         
         String path = FolderManager.getPath(Constants.SOURCE_FOLDER, lang);
         if(path == null){
-            return Response.status(Status.NOT_FOUND).build();
+            ErrorMessage em = new ErrorMessage(lang + " does not exist", Status.NOT_FOUND.getStatusCode(), null);
+            return Response.status(Status.NOT_FOUND).entity(em).build();
         }        
         FolderManager.delete(path);
-        return Response.status(Status.OK).build();
+        SuccessMessage sm = new SuccessMessage(lang + " successfully deleted", Status.OK.getStatusCode(), null);
+        return Response.status(Status.OK).entity(sm).build();
     }
 
     // */comalat/languages/upload
@@ -140,7 +145,6 @@ public class LanguagesResources {
 
         if (filename == null || filename.replace(" ", "").isEmpty()) {
             // invalid filename input
-            // if is null get name from info
             throw new InvalidInputException("Please input file name");
         }
         filename = filename.replace(" ", "");
@@ -154,7 +158,7 @@ public class LanguagesResources {
         FolderManager.saveUploadedFile(in, Constants.UPLOAD_FOLDER, filename);
         CompressManager.Decompression(Constants.UPLOAD_FOLDER, Constants.SOURCE_FOLDER, filename);
         
-        SuccessMessage message = new SuccessMessage("Upload "+info.getFileName(), Status.CREATED.getStatusCode());
+        SuccessMessage message = new SuccessMessage("Upload "+info.getFileName(), Status.CREATED.getStatusCode(), null);
         return Response.status(Status.CREATED).entity(message).build();
     }
     
@@ -178,7 +182,6 @@ public class LanguagesResources {
 
         if (filename == null || filename.replace(" ", "").isEmpty()) {
             // invalid filename input
-            // if is null get name from info
             throw new InvalidInputException("Please input file name");
         }
         String langName = new String(filename);
@@ -191,7 +194,7 @@ public class LanguagesResources {
         }
         CompressManager.Decompression(Constants.UPLOAD_FOLDER, Constants.SOURCE_FOLDER, filename);
         
-        SuccessMessage message = new SuccessMessage("Updated "+info.getFileName(), Status.OK.getStatusCode());
+        SuccessMessage message = new SuccessMessage("Updated "+info.getFileName(), Status.OK.getStatusCode(), null);
         return Response.status(Status.OK).entity(message).build();
     }
     

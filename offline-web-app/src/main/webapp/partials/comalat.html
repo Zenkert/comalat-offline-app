@@ -11,10 +11,10 @@
     
     <div class="message">
         <div class="alert alert-info" ng-show=info.flag>
-            <strong>Info!</strong> {{info.message}} <i ng-if="info.documentation != ''"><br><strong> Documentation!</strong> {{info.documentation}}</i>
+            <strong>Info!</strong> {{info.message}} <i ng-if="info.documentation"><br><strong> Documentation!</strong> {{info.documentation}}</i>
         </div>
         <div class="alert alert-danger" ng-show=error.flag>
-            <strong>Error!</strong> {{error.message}} <i ng-if="error.documentation != ''"><br><strong>Documentation!</strong> {{error.documentation}}</i>
+            <strong>Error!</strong> {{error.message}} <i ng-if="error.documentation"><br><strong>Documentation!</strong> {{error.documentation}}</i>
         </div>
     </div>
     <div class="container-fluid" ng-style="{'opacity': dataloading ? 0.3 : 1}">

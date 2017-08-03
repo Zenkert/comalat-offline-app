@@ -1,6 +1,7 @@
 package comalat.Application.RestAPI.Resources;
 
 import comalat.Constants;
+import comalat.Application.Domain.ResponseMessage.ErrorMessage;
 import comalat.Application.Domain.ResponseMessage.SuccessMessage;
 import comalat.Application.Exception.ConflictException;
 import comalat.Application.Exception.DataNotFoundException;
@@ -40,7 +41,7 @@ public class LevelsResources {
 
     @GET
     public Response get() {
-        SuccessMessage message = new SuccessMessage("LEVELS", Status.OK.getStatusCode());
+        SuccessMessage message = new SuccessMessage("LEVELS", Status.OK.getStatusCode(), null);
         return Response.status(Status.OK).entity(message).build();
     }
 
@@ -83,13 +84,14 @@ public class LevelsResources {
 
         String path = FolderManager.getPath(FolderManager.getPath(Constants.SOURCE_FOLDER, lang), lvl);
         if (path == null) {
-            throw new DataNotFoundException("Can not find folder/file " + "{" + lvl + "} at folder {" + lang + "}");
+            ErrorMessage em = new ErrorMessage(lvl + " does not exist at folder "+lang, Status.NOT_FOUND.getStatusCode(), null);
+            return Response.status(Status.NOT_FOUND).entity(em).build();
         }
 
         FolderManager.delete(path);
 
-        SuccessMessage message = new SuccessMessage("Delete " + lvl + " at folder " + lang, Status.OK.getStatusCode());
-        return Response.status(Status.OK).entity(message).build();
+        SuccessMessage sm = new SuccessMessage(lvl + " successfully deleted", Status.OK.getStatusCode(), null);
+        return Response.status(Status.OK).entity(sm).build();
     }
 
     // upload education level from a language
@@ -115,7 +117,6 @@ public class LevelsResources {
 
         if (filename == null || filename.replace(" ", "").isEmpty()) {
             // invalid filename input
-            // if is null get name from info
             throw new InvalidInputException("Please input file name");
         }
         filename = filename.replace(" ", "");
@@ -130,7 +131,7 @@ public class LevelsResources {
         FolderManager.saveUploadedFile(in, Constants.UPLOAD_FOLDER, filename);
         CompressManager.Decompression(Constants.UPLOAD_FOLDER, source, filename);
 
-        SuccessMessage message = new SuccessMessage("Upload " + info.getFileName(), Status.CREATED.getStatusCode());
+        SuccessMessage message = new SuccessMessage("Upload " + info.getFileName(), Status.CREATED.getStatusCode(), null);
         return Response.status(Status.CREATED).entity(message).build();
     }
 
@@ -169,7 +170,7 @@ public class LevelsResources {
         }
         CompressManager.Decompression(Constants.UPLOAD_FOLDER, source, filename);
 
-        SuccessMessage message = new SuccessMessage("Updated " + info.getFileName(), Status.CREATED.getStatusCode());
+        SuccessMessage message = new SuccessMessage("Updated " + info.getFileName(), Status.CREATED.getStatusCode(), null);
         return Response.status(Status.OK).entity(message).build();
     }
     

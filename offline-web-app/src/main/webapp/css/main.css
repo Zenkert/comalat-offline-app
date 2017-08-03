@@ -40,17 +40,17 @@
 
 .loadingbar {
     position: fixed;
-    top: 20%;
+    top: 50%;
     left: 50%;
-    transform: translate(-20%, -50%);
+    transform: translate(-50%, -50%);
     z-index: 1000;
 }
 
 .message {
     position: fixed;
-    top: 50%;
+    top: 0px;
     left: 50%;
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, 51px);
     z-index: 1000;
 }
 

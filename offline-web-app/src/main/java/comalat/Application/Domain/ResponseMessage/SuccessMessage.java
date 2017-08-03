@@ -15,12 +15,6 @@ public class SuccessMessage {
 
     public SuccessMessage() {
     }
-
-    public SuccessMessage(String message, int code) {
-        this.message = message;
-        this.code = code;
-        this.documantation = "";
-    }
     
     public SuccessMessage(String message, int code, String documantation) {
         this.message = message;

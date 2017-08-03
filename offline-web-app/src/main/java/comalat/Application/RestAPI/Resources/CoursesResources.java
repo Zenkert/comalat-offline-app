@@ -1,6 +1,7 @@
 package comalat.Application.RestAPI.Resources;
 
 import comalat.Constants;
+import comalat.Application.Domain.ResponseMessage.ErrorMessage;
 import comalat.Application.Domain.ResponseMessage.SuccessMessage;
 import comalat.Application.Exception.ConflictException;
 import comalat.Application.Exception.DataNotFoundException;
@@ -40,7 +41,7 @@ public class CoursesResources {
 
     @GET
     public Response get() {
-        SuccessMessage message = new SuccessMessage("Courses", Status.OK.getStatusCode());
+        SuccessMessage message = new SuccessMessage("Courses", Status.OK.getStatusCode(), null);
         return Response.status(Status.OK).entity(message).build();
     }
 
@@ -90,11 +91,12 @@ public class CoursesResources {
         String path = FolderManager.getPath(source, coursesXY);
         
         if (path == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            ErrorMessage em = new ErrorMessage(coursesXY + " does not exist at folder " + lvl, Status.NOT_FOUND.getStatusCode(), null);
+            return Response.status(Status.NOT_FOUND).entity(em).build();
         }
         FolderManager.delete(path);
-
-        return Response.status(Status.OK).build();
+        SuccessMessage sm = new SuccessMessage(coursesXY + " successfully deleted", Status.OK.getStatusCode(), null);
+        return Response.status(Status.OK).entity(sm).build();
     }
 
     // upload courses to language/education_level
@@ -136,7 +138,7 @@ public class CoursesResources {
         FolderManager.saveUploadedFile(in, Constants.UPLOAD_FOLDER, filename);
         CompressManager.Decompression(Constants.UPLOAD_FOLDER, source, filename);
 
-        SuccessMessage message = new SuccessMessage("Upload " + info.getFileName(), Status.CREATED.getStatusCode());
+        SuccessMessage message = new SuccessMessage("Upload " + info.getFileName(), Status.CREATED.getStatusCode(), null);
         return Response.status(Status.CREATED).entity(message).build();
     }
 
@@ -159,13 +161,12 @@ public class CoursesResources {
 
         if (in == null || !info.getFileName().endsWith(Constants.ZIP_FORMAT)) {
             // throw invalid input exception
-            throw new DataNotFoundException("ZIP FORMAT ONLY!!");
+            throw new InvalidInputException("Please select zip format file");
         }
 
         if (filename == null || filename.replace(" ", "").isEmpty()) {
             // invalid filename input
-            // if is null get name from info
-            throw new DataNotFoundException("file is empty");
+            throw new InvalidInputException("Please input file name");
         }
         String courseName = new String(filename);
         filename = filename.replace(" ", "");
@@ -179,7 +180,7 @@ public class CoursesResources {
         }
         CompressManager.Decompression(Constants.UPLOAD_FOLDER, source, filename);
 
-        SuccessMessage message = new SuccessMessage("Updated " + info.getFileName(), Status.CREATED.getStatusCode());
+        SuccessMessage message = new SuccessMessage("Updated " + info.getFileName(), Status.CREATED.getStatusCode(), null);
         return Response.status(Status.OK).entity(message).build();
     }
 

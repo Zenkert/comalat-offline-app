@@ -13,13 +13,13 @@ app.factory('AuthorizationService', ['Base64', '$cookieStore', '$rootScope', '$h
                 response = {
                     message: "Login Success",
                     code: 200,
-                    documentation: ""
+                    documentation: null
                 };
             } else {
                 response = {
                     message: "Username or password is incorrect",
                     code: 404,
-                    documentation: ""
+                    documentation: null
                 };
             }
             callback(response);
@@ -160,6 +160,8 @@ var success = function (response, name) {
 
         if (pdffilename !== null) {
             name = pdffilename;
+        } else {
+            name = name + format;
         }
 
         try {
@@ -167,7 +169,7 @@ var success = function (response, name) {
             var win = (window.URL || window.webkitURL)
             var url = win.createObjectURL(blob);
             linkElement.setAttribute('href', url);
-            linkElement.setAttribute("download", name + format);
+            linkElement.setAttribute("download", name);
 
             var clickEvent = new MouseEvent("click", {
                 "view": window,

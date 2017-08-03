@@ -139,7 +139,7 @@ app.controller('APICtrl', ['$scope', '$rootScope', '$timeout', '$http', 'getData
                             console.log("GET DATA OK");
                             $scope.languages = response.data.Languages;
                             if (response.data.Languages.length < 1) {
-                                displayMessage("There is no Language!", response.status, "", "info");
+                                displayMessage("There is no Language lesson!", response.status, null, "info");
                             }
 
                             if ($scope.languages.length > 1) {
@@ -235,7 +235,7 @@ app.controller('APICtrl', ['$scope', '$rootScope', '$timeout', '$http', 'getData
                             if (response.data.message !== undefined) {
                                 displayMessage(response.data.message, response.status, response.data.documentation, "info");
                             } else {
-                                displayMessage("DELETE DONE", response.status, "If this error insist contact us!", "info");
+                                displayMessage("DELETE DONE", response.status, null, "info");
                             }
                             init();
                         }
@@ -326,7 +326,7 @@ app.controller('APICtrl', ['$scope', '$rootScope', '$timeout', '$http', 'getData
                                     if (response.data.message !== undefined) {
                                         displayMessage(response.data.message, response.status, response.data.documentation, "info");
                                     } else {
-                                        displayMessage("UPLOAD DONE", response.status, "If this error insist contact us!", "info");
+                                        displayMessage("UPLOAD DONE", response.status, null, "info");
                                     }
                                     init();
                                 }
@@ -350,14 +350,14 @@ app.controller('APICtrl', ['$scope', '$rootScope', '$timeout', '$http', 'getData
                                     if (response.data.message !== undefined) {
                                         displayMessage(response.data.message, response.status, response.data.documentation, "info");
                                     } else {
-                                        displayMessage("UPDATE DONE", response.status, "If this error insist contact us!", "info");
+                                        displayMessage("UPDATE DONE", response.status, null, "info");
                                     }
                                     init();
                                 }
                             }
                     );
                 }
-            }  
+            }
         };
 
         var displayMessage = function (message, code, doc, type) {

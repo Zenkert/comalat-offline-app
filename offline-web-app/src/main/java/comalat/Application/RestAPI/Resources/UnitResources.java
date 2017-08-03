@@ -1,6 +1,7 @@
 package comalat.Application.RestAPI.Resources;
 
 import comalat.Constants;
+import comalat.Application.Domain.ResponseMessage.ErrorMessage;
 import comalat.Application.Domain.ResponseMessage.SuccessMessage;
 import comalat.Application.Exception.DataNotFoundException;
 import comalat.Application.Exception.ConflictException;
@@ -36,7 +37,7 @@ public class UnitResources {
 
     @GET
     public Response get() {
-        SuccessMessage message = new SuccessMessage("Units", Status.OK.getStatusCode());
+        SuccessMessage message = new SuccessMessage("Units", Status.OK.getStatusCode(), null);
         return Response.status(Status.OK).entity(message).build();
     }
 
@@ -80,10 +81,12 @@ public class UnitResources {
         source = FolderManager.getPath(source, unit);
 
         if (source == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            ErrorMessage em = new ErrorMessage(unit + " does not exist at folder" + coursesXY, Status.NOT_FOUND.getStatusCode(), null);
+            return Response.status(Status.NOT_FOUND).entity(em).build();
         }
         FolderManager.delete(source);
-        return Response.status(Status.OK).build();
+        SuccessMessage sm = new SuccessMessage(unit + " successfully deleted", Status.OK.getStatusCode(), null);
+        return Response.status(Status.OK).entity(sm).build();
     }
 
     // upload pdf file to language/education_level/courses
@@ -121,7 +124,7 @@ public class UnitResources {
 
         FolderManager.saveUploadedFile(in, Paths.get(source, unit).toString(), info.getFileName());
 
-        SuccessMessage message = new SuccessMessage("Upload " + info.getFileName(), Status.CREATED.getStatusCode());
+        SuccessMessage message = new SuccessMessage("Upload " + info.getFileName(), Status.CREATED.getStatusCode(), null);
         return Response.status(Status.CREATED).entity(message).build();
     }
 
@@ -153,7 +156,7 @@ public class UnitResources {
         }
         FolderManager.saveUploadedFile(in, Paths.get(source, unit).toString(), info.getFileName());
 
-        SuccessMessage message = new SuccessMessage("Update " + info.getFileName(), Status.OK.getStatusCode());
+        SuccessMessage message = new SuccessMessage("Update " + info.getFileName(), Status.OK.getStatusCode(), null);
         return Response.status(Status.OK).entity(message).build();
     }
 }

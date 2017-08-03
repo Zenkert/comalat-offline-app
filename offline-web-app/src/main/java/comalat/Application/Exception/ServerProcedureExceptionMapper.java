@@ -16,7 +16,7 @@ public class ServerProcedureExceptionMapper implements ExceptionMapper<ServerPro
     @Override
     public Response toResponse(ServerProcedureException ex) {
         
-        ErrorMessage errorMessage = new ErrorMessage(ex.getMessage(), Status.SERVICE_UNAVAILABLE.getStatusCode(), "url_link");
+        ErrorMessage errorMessage = new ErrorMessage(ex.getMessage(), Status.SERVICE_UNAVAILABLE.getStatusCode(), "Please inform us for this error");
         return Response.status(Status.SERVICE_UNAVAILABLE)
                 .entity(errorMessage)
                 .build();

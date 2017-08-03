@@ -15,7 +15,7 @@ public class InvalidInputExceptionMapper implements ExceptionMapper<InvalidInput
 
     @Override
     public Response toResponse(InvalidInputException ex) {
-       ErrorMessage errorMessage = new ErrorMessage(ex.getMessage(), Status.NOT_ACCEPTABLE.getStatusCode(), "url_link");
+       ErrorMessage errorMessage = new ErrorMessage(ex.getMessage(), Status.NOT_ACCEPTABLE.getStatusCode(), null);
         return Response.status(Status.NOT_ACCEPTABLE)
                 .entity(errorMessage)
                 .build(); 
