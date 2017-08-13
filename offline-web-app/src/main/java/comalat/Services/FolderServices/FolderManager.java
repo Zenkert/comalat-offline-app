@@ -30,7 +30,6 @@ public class FolderManager {
     /**
      * Create main folders.
      *
-     * @param source A String absolute path of folder/file.
      * @throws ServerProcedureException if something goes wrong.
      *
      */

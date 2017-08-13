@@ -13,6 +13,7 @@ public class Constants {
     private static final String RESOURCES = "comalat Languages";
     private static final String DOWNLOAD = "comalat Download";
     private static final String UPLOAD = "comalat UPLOAD";
+    private static final String ACCESSFILE = "access_data.txt";
     
     // Source folder
     public static final String SOURCE_FOLDER = Paths.get(USER_DIR, MAIN_FOLDER, RESOURCES).toString();
@@ -20,6 +21,8 @@ public class Constants {
     public static final String DOWNLOAD_FOLDER = Paths.get(USER_DIR, MAIN_FOLDER, DOWNLOAD).toString();
     // Destination folder for upload
     public static final String UPLOAD_FOLDER = Paths.get(USER_DIR, MAIN_FOLDER, UPLOAD).toString();
+    // Access Data File
+    public static final String ACCESS_DATA = Paths.get(USER_DIR, MAIN_FOLDER, ACCESSFILE).toString();
     
     public static final int BUFFER_SIZE = 4096;
     

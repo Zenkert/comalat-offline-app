@@ -9,14 +9,6 @@
         <img ng-show="dataloading" src="img/gif/loadingbar.gif" alt=""/>
     </div>
     
-    <div class="message">
-        <div class="alert alert-info" ng-show=info.flag>
-            <strong>Info!</strong> {{info.message}} <i ng-if="info.documentation"><br><strong> Documentation!</strong> {{info.documentation}}</i>
-        </div>
-        <div class="alert alert-danger" ng-show=error.flag>
-            <strong>Error!</strong> {{error.message}} <i ng-if="error.documentation"><br><strong>Documentation!</strong> {{error.documentation}}</i>
-        </div>
-    </div>
     <div class="container-fluid" ng-style="{'opacity': dataloading ? 0.3 : 1}">
         <div class="row">
             <div ng-repeat="language in languages" class="lang col-sm-12 col-md-6 col-lg-{{largeView}} panel panel-primary">
@@ -26,7 +18,7 @@
                         <i data-toggle="tooltip" data-placement="top" title="Download">
                             <span class="get fa fa-download" aria-hidden="true" ng-click="getMethod(language.Language, null, null, null)"></span></i>
                         <i data-toggle="tooltip" data-placement="top" title="Delete">
-                            <span class="delete fa fa-trash-o" aria-hidden="true" ng-click="deleteMethod(language.Language, null, null, null)"></span></i>
+                            <span class="delete fa fa-trash-o" aria-hidden="true" ng-confirm-click="Are you sure to delete language {{language.Language}}?" confirmed-click="deleteMethod(language.Language, null, null, null)"></span></i>
                         <i data-toggle="tooltip" data-placement="top" title="Update">
                             <span class="put fa fa-pencil-square-o" aria-hidden="true" ng-click="putMethod(language.Language, null, null, null)" data-toggle="modal" data-target="#myModal"></span></i>
                     </div> 
@@ -62,7 +54,7 @@
                                             <i data-toggle="tooltip" data-placement="top" title="Download">
                                                 <span class="get fa fa-download" aria-hidden="true" ng-click="getMethod(language.Language, level.EducationLevel, null, null)"></span></i>
                                             <i data-toggle="tooltip" data-placement="top" title="Delete">
-                                                <span class="delete fa fa-trash-o" aria-hidden="true" ng-click="deleteMethod(language.Language, level.EducationLevel, null, null)"></span></i>
+                                                <span class="delete fa fa-trash-o" aria-hidden="true" ng-confirm-click="Are you sure to delete education level {{level.EducationLevel}}?" confirmed-click="deleteMethod(language.Language, level.EducationLevel, null, null)"></span></i>
                                             <i data-toggle="tooltip" data-placement="top" title="Update">
                                                 <span class="put fa fa-pencil-square-o" aria-hidden="true" ng-click="putMethod(language.Language, level.EducationLevel, null, null)" data-toggle="modal" data-target="#myModal"></span></i>
                                         </div>
@@ -75,7 +67,7 @@
                                                     <i data-toggle="tooltip" data-placement="top" title="Download">
                                                         <span class="get fa fa-download" aria-hidden="true" ng-click="getMethod(language.Language, level.EducationLevel, course.Course, null)"></span></i>
                                                     <i data-toggle="tooltip" data-placement="top" title="Delete">
-                                                        <span class="delete fa fa-trash-o" aria-hidden="true" ng-click="deleteMethod(language.Language, level.EducationLevel, course.Course, null)"></span></i>
+                                                        <span class="delete fa fa-trash-o" aria-hidden="true" ng-confirm-click="Are you sure to delete courses {{course.Course}}?" confirmed-click="deleteMethod(language.Language, level.EducationLevel, course.Course, null)"></span></i>
                                                     <i data-toggle="tooltip" data-placement="top" title="Update">
                                                         <span class="put fa fa-pencil-square-o" aria-hidden="true" ng-click="putMethod(language.Language, level.EducationLevel, course.Course, null)" data-toggle="modal" data-target="#myModal"></span></i>
                                                 </div> 
@@ -88,7 +80,7 @@
                                                             <i data-toggle="tooltip" data-placement="top" title="Download">
                                                                 <span class="get fa fa-download" aria-hidden="true" ng-click="getMethod(language.Language, level.EducationLevel, course.Course, unit.Unit)"></span></i>
                                                             <i data-toggle="tooltip" data-placement="top" title="Delete">
-                                                                <span class="delete fa fa-trash-o" aria-hidden="true" ng-click="deleteMethod(language.Language, level.EducationLevel, course.Course, unit.Unit)"></span></i>
+                                                                <span class="delete fa fa-trash-o" aria-hidden="true" ng-confirm-click="Are you sure to delete unit {{unit.Unit}}?" confirmed-click="deleteMethod(language.Language, level.EducationLevel, course.Course, unit.Unit)"></span></i>
                                                             <i data-toggle="tooltip" data-placement="top" title="Update">
                                                                 <span class="put fa fa-pencil-square-o" aria-hidden="true" ng-click="putMethod(language.Language, level.EducationLevel, course.Course, unit.Unit)" data-toggle="modal" data-target="#myModal"></span></i>
                                                         </div>
@@ -216,8 +208,7 @@
                     </div>
                 </form>
             </div>
-
-
         </div>
     </div>
+    
 </div>  

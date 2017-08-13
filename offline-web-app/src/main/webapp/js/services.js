@@ -1,31 +1,48 @@
-/*** Global ***/
-var baseURI = 'http://localhost:8080/offline-web-app/';
 
-app.factory('AuthorizationService', ['Base64', '$cookieStore', '$rootScope', '$http',
-    function (Base64, $cookieStore, $rootScope, $http) {
-        var service = {};
-        var fullname = "";
-        service.Login = function (username, password, callback) {
-            var response = {};
-            // Testing login
-            if (username === "admin" && password === "admin") {
-                fullname = "Admin";
-                response = {
-                    message: "Login Success",
-                    code: 200,
-                    documentation: null
-                };
-            } else {
-                response = {
-                    message: "Username or password is incorrect",
-                    code: 404,
-                    documentation: null
-                };
-            }
-            callback(response);
+app.service('AuthorizationService', ['Base64', '$cookieStore', '$rootScope', '$http', '$location',
+    function (Base64, $cookieStore, $rootScope, $http, $location) {
+        var baseURL = $location.$$absUrl.replace($location.$$url, '').replace('#!', '');
+        
+        this.Login = function (username, password) {
+            var fd = new FormData();
+            fd.append("username", username);
+            fd.append("password", password);
+
+            return $http.post(baseURL + 'comalat/login', fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
+            }).then(
+                    function (response) {
+                        //console.log("Login GOOD");
+                        return response;
+                    },
+                    function (response) {
+                        //console.log("Login BAD");
+                        return response;
+                    });
+        };
+        
+        this.Edit = function (username, password, fullname) {
+            var fd = new FormData();
+            fd.append("username", username);
+            fd.append("password", password);
+            fd.append("fullname", fullname);
+
+            return $http.put(baseURL + 'comalat/login', fd, {
+                transformRequest: angular.identity,
+                headers: {'Content-Type': undefined}
+            }).then(
+                    function (response) {
+                        //console.log("Edit GOOD");
+                        return response;
+                    },
+                    function (response) {
+                        //console.log("Edit BAD");
+                        return response;
+                    });
         };
 
-        service.SetCredentials = function (username, password) {
+        this.SetCredentials = function (username, password, fullname) {
             var authdata = Base64.encode(username + ':' + password);
             $rootScope.IsloggedIn = true;
             $rootScope.user = {
@@ -38,25 +55,25 @@ app.factory('AuthorizationService', ['Base64', '$cookieStore', '$rootScope', '$h
             $cookieStore.put('comalatUSER', $rootScope.user);
         };
 
-        service.ClearCredentials = function () {
+        this.ClearCredentials = function () {
             $rootScope.IsloggedIn = false;
             $rootScope.user = {};
             $cookieStore.remove('comalatUSER');
             delete $http.defaults.headers.common.Authorization;
         };
-
-        return service;
     }]);
 
-app.service('getData', ['$http', function ($http) {
+app.service('getData', ['$http', '$location', function ($http, $location) {
+        var baseURL = $location.$$absUrl.replace($location.$$url, '').replace('#!', '');
         this.getDatafromServer = function () {
-            return $http.get(baseURI + 'comalat/data').then(
+            console.log('URL ' + baseURL);
+            return $http.get(baseURL + 'comalat/data').then(
                     function (response) {
-                        console.log("GET DATA SERVICE OK");
+                        //console.log("GET DATA SERVICE OK");
                         return response;
                     },
                     function (response) {
-                        console.log("GET DATA SERVICE ERROR");
+                        //console.log("GET DATA SERVICE ERROR");
                         return response;
                     });
         };
@@ -66,53 +83,53 @@ app.service('getData', ['$http', function ($http) {
                 responseType: "arraybuffer",
                 transformResponse: jsonBufferToObject
             };
-            return $http.get(baseURI + url + name, config).then(
+            return $http.get(baseURL + url + name, config).then(
                     function (response) {
-                        console.log("GET FILE SERVICE OK");
+                        //console.log("GET FILE SERVICE OK");
                         success(response, name);
                         return response;
                     },
                     function (response) {
-                        console.log("GET FILE SERVICE ERROR");
-                        error(response);
+                        //console.log("GET FILE SERVICE ERROR");
                         return response;
                     });
         };
 
     }]);
 
-app.service('deleteFile', ['$http', function ($http) {
+app.service('deleteFile', ['$http', '$location', function ($http, $location) {
+        var baseURL = $location.$$absUrl.replace($location.$$url, '').replace('#!', '');
         this.deleteFilefromServer = function (url, name) {
-            return $http.delete(baseURI + url + name).then(
+            return $http.delete(baseURL + url + name).then(
                     function (response) {
-                        console.log("DELETE DATA SERVICE OK");
+                        //console.log("DELETE DATA SERVICE OK");
                         return response;
                     },
                     function (response) {
-                        console.log("DELETE DATA SERVICE ERROR");
+                        //console.log("DELETE DATA SERVICE ERROR");
                         return response;
                     });
         }
     }]);
 
-app.service('uploadFile', ['$http', function ($http) {
-
+app.service('uploadFile', ['$http', '$location', function ($http, $location) {
+        var baseURL = $location.$$absUrl.replace($location.$$url, '').replace('#!', '');
         this.uploadFiletoServer = function (file, name, url) {
             var fd = new FormData();
 
             fd.append('uploadFile', file);
             fd.append('name', name);
 
-            return $http.post(baseURI + url + 'upload', fd, {
+            return $http.post(baseURL + url + 'upload', fd, {
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}
             }).then(
                     function (response) {
-                        console.log("UPLOAD SERVICE OK");
+                        //console.log("UPLOAD SERVICE OK");
                         return response;
                     },
                     function (response) {
-                        console.log("UPLOAD SERVICE ERROR");
+                        //console.log("UPLOAD SERVICE ERROR");
                         return response;
                     });
         };
@@ -123,28 +140,28 @@ app.service('uploadFile', ['$http', function ($http) {
             fd.append('uploadFile', file);
             fd.append('name', name);
 
-            return $http.put(baseURI + url + 'update', fd, {
+            return $http.put(baseURL + url + 'update', fd, {
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}
             }).then(
                     function (response) {
-                        console.log("UPDATE SERVICE OK");
+                        //console.log("UPDATE SERVICE OK");
                         return response;
                     },
                     function (response) {
-                        console.log("UPDATE SERVICE ERROR");
+                        //console.log("UPDATE SERVICE ERROR");
                         return response;
                     });
         };
 
     }]);
 
-app.run(['$rootScope', '$location', '$cookieStore', '$http',
-    function ($rootScope, $location, $cookieStore, $http) {
+app.run(['$rootScope', '$cookieStore', '$http',
+    function ($rootScope, $cookieStore, $http) {
         $rootScope.user = $cookieStore.get('comalatUSER') || {};
         if ($rootScope.user.authdata !== undefined) {
             $rootScope.IsloggedIn = true;
-            console.log("MPIKA run: " + $rootScope.user.username + "  " + $rootScope.user.fullname + "  " + $rootScope.user.authdata);
+            //console.log("Run: " + $rootScope.user.username + "  " + $rootScope.user.fullname + "  " + $rootScope.user.authdata);
             $http.defaults.headers.common['Authorization'] = 'Basic ' + $rootScope.user.authdata;
         }
     }]);
@@ -184,11 +201,6 @@ var success = function (response, name) {
         }
     }
 };
-
-var error = function (response) {
-    console.log("Error: " + response.data.message);
-};
-
 
 function jsonBufferToObject(data, headersGetter, status) {
     var type = headersGetter("Content-Type");
@@ -269,10 +281,10 @@ app.factory('Base64', function () {
 
                 output = output + String.fromCharCode(chr1);
 
-                if (enc3 != 64) {
+                if (enc3 !== 64) {
                     output = output + String.fromCharCode(chr2);
                 }
-                if (enc4 != 64) {
+                if (enc4 !== 64) {
                     output = output + String.fromCharCode(chr3);
                 }
 

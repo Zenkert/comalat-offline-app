@@ -45,35 +45,109 @@
                     <ul class="nav navbar-nav navbar-right" style="cursor: pointer;">
                         <li ng-hide=IsloggedIn><a ng-click="login(); collapseNavbar()">
                                 <i data-toggle="tooltip" data-placement="top" title="login">Login</i></a></li>
-                        <li ng-show=IsloggedIn>
-                            <a ng-click="logout(); collapseNavbar()">
-                                <i data-toggle="tooltip" data-placement="top" title="logout">
-                                    <span class="glyphicon glyphicon-user"></span> {{user.fullname}}</i>
+                        <li class="dropdown" ng-show=IsloggedIn>
+                            <a class="dropdown-toggle" id="usermenu" data-toggle="dropdown">
+                                <span class="glyphicon glyphicon-user"></span> {{user.fullname}}
+                                <span class="caret"></span>
                             </a>
+                            <ul class="dropdown-menu" role="menu" aria-labelledby="usermenu">
+                                <li role="presentation"><a class="fa fa-pencil" aria-hidden="true" role="menuitem" tabindex="-1" ng-click="userModal(); collapseNavbar()" data-toggle="modal" data-target="#UserModal"> Edit User</a></li>
+                                <li role="presentation" class="divider"></li>
+                                <li role="presentation"><a class="fa fa-sign-out" aria-hidden="true" role="menuitem" tabindex="-1" ng-click="logout(); collapseNavbar()"> Logout </a></li>
+                            </ul>
                         </li>
                     </ul>
                 </div>
             </div>
         </div>
 
-        <div class="container-fluid" style="padding-bottom: 40px;">
+        <div class="container-fluid" style="padding-bottom: 40px;" ng-cloak>
+            <div class="message">
+                <div class="alert alert-info" ng-show=info.flag>
+                    <strong>Info!</strong> {{info.message}} <i ng-if="info.documentation"><br><strong> Documentation!</strong> {{info.documentation}}</i>
+                </div>
+                <div class="alert alert-danger" ng-show=error.flag>
+                    <strong>Error!</strong> {{error.message}} <i ng-if="error.documentation"><br><strong>Documentation!</strong> {{error.documentation}}</i>
+                </div>
+            </div>
             <div class="ng-view"></div>
         </div>
         <footer class="container-fluid navbar navbar-inverse navbar-fixed-bottom">
-                <div class="copyright container">
-                    <div class="col-md-6">
-                        <p>© 2017 - Comalat</p>
-                    </div>
-                    <div class="col-md-6">
-                        <ul class="bottom_ul">
-                            <li><a href="#!">Comalat Web App</a></li>
-                            <li><a href="#!comalat">ComalatAPI</a></li>
-                            <li><a href="http://www.comalat.eu/">Comalat.eu</a></li>
-                            <li><a href="#!about">About</a></li>  
-                        </ul>
-                    </div>
+            <div class="copyright container">
+                <div class="col-md-6">
+                    <p>© 2017 - Comalat</p>
+                </div>
+                <div class="col-md-6">
+                    <ul class="bottom_ul">
+                        <li><a href="#!">Comalat Web App</a></li>
+                        <li><a href="#!comalat">ComalatAPI</a></li>
+                        <li><a href="http://www.comalat.eu/">Comalat.eu</a></li>
+                        <li><a href="#!about">About</a></li>  
+                    </ul>
+                </div>
             </div>
         </footer>
+
+        <!-- Modal -->
+        <div class="modal fade in" id="UserModal" role="dialog">
+            <div class="modal-dialog">
+
+                <!-- Modal content-->
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                        <h2 class="modal-title">Change username and password</h2>
+                    </div>
+                    <form name="userform" role="form">
+                        <div class="modal-body">
+
+                            <div class="form-group" ng-class="{'has-error': userform.usermodalfullname.$dirty && userform.usermodalfullname.$error.required }">
+                                <label for="usermodalfullname">Full name</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-user fa-2x" aria-hidden="true"></i></span>
+                                    <input type="text" name="usermodalfullname" placeholder="Full name" class="form-control" id="usermodalfullname" ng-model="usermodalfullname" required/>
+                                </div>
+                                <span ng-show="userform.usermodalfullname.$dirty && userform.usermodalfullname.$error.required" class="help-block">Full name is required</span>
+                            </div>
+
+                            <div class="form-group" ng-class="{'has-error': userform.usermodalname.$error.pattern || (userform.usermodalname.$dirty && userform.usermodalname.$error.required) }">
+                                <label for="usermodalname">Username</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-user fa-2x" aria-hidden="true"></i></span>
+                                    <input type="text" name="usermodalname" placeholder="Username" class="form-control" id="usermodalname" ng-model="usermodalname" required ng-pattern="/^[a-zA-Z0-9]*$/"/>
+                                </div>
+                                <span ng-show="userform.usermodalname.$dirty && userform.usermodalname.$error.required" class="help-block">Username is required</span>
+                                <span ng-show="userform.usermodalname.$error.pattern" class="help-block">Please use letters and numbers only</span>
+                            </div>
+                            
+                            <div class="form-group" ng-class="{'has-error': userform.usermodalpass.$dirty && userform.usermodalpass.$error.required }">
+                                <label for="usermodalpass">New password</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-lock fa-2x" aria-hidden="true"></i></span>
+                                    <input type="password" name="usermodalpass" placeholder="New password" id="usermodalpass" class="form-control" ng-model="usermodalpass" required />
+                                </div>
+                                <span ng-show="userform.usermodalpass.$dirty && userform.usermodalpass.$error.required" class="help-block">New password is required</span>
+                            </div>
+
+                            <div class="form-group" ng-class="{'has-error': (usermodalpassconf !== usermodalpass) || (userform.usermodalpassconf.$dirty && userform.usermodalpassconf.$error.required) }">
+                                <label for="usermodalpassconf">Repeat password</label>
+                                <div class="input-group">
+                                    <span class="input-group-addon"><i class="fa fa-lock fa-2x" aria-hidden="true"></i></span>
+                                    <input type="password" name="usermodalpassconf" placeholder="Confirm password" id="usermodalpassconf" class="form-control" ng-model="usermodalpassconf" required/>
+                                </div>
+                                <span ng-show="(usermodalpassconf !== usermodalpass) || (userform.usermodalpassconf.$dirty && userform.usermodalpassconf.$error.required)" class="help-block">Passwords do not match</span>
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <div class="form-actions">
+                                <img ng-if="dataloading" src="img/gif/snake34.gif" alt=""/>
+                                <button type="submit" ng-disabled="userform.$invalid || userform.$pending || dataloading || (usermodalpassconf !== usermodalpass)" class="btn btn-primary" ng-confirm-click="Are you sure to edit user?" confirmed-click="edit()">Submit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
 
     </body>
 </html>

@@ -1,4 +1,8 @@
 
+[ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
+  display: none !important;
+}
+
 .ng-view{
     height: 100%;
 }
@@ -17,7 +21,7 @@
     height: 44px;
 }
 
-#myModal {
+#myModal #UserModal {
     position: fixed;
     margin: 0px;
     padding: 0px;
@@ -28,6 +32,10 @@
 }
 
 #myModal input {
+    height: 44px;
+}
+
+#UserModal input {
     height: 44px;
 }
 
