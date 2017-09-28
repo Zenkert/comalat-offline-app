@@ -44,7 +44,7 @@ app.directive('ngConfirmClick', [
                 var clickAction = attr.confirmedClick;
                 element.bind('click', function (event) {
                     if (window.confirm(msg)) {
-                        scope.$eval(clickAction)
+                        scope.$eval(clickAction);
                     }
                 });
             }
@@ -213,6 +213,7 @@ app.controller('APICtrl', ['$scope', '$rootScope', '$timeout', '$http', 'getData
             var res = getData.getDatafromServer();
             res.then(
                     function (response) {
+                        console.log("GET DATA FROM SERVER RESPONSE STATUS: " + response.status);
                         if (response.status === 200) {
                             //console.log("GET DATA OK");
                             $scope.languages = response.data.Languages;
@@ -251,24 +252,27 @@ app.controller('APICtrl', ['$scope', '$rootScope', '$timeout', '$http', 'getData
         };
 
         // GET methods
-        $scope.getMethod = function (lang, lvl, course, unit) {
+        $scope.getMethod = function (lang, lvl, course, unit, pdffile) {
+            var zip_f = '.zip';
+            var pdf_f = '.pdf';
             $scope.dataloading = true;
             //console.log("getMethod: lang= " + lang + " lvl= " + lvl + " course= " + course + " unit= " + unit);
             if (lang !== null && lvl === null) {
-                getCall('comalat/languages/', lang);
+                getCall('languages/', lang, pdffile, zip_f);
             } else if (lang !== null && lvl !== null && course === null) {
-                getCall('comalat/languages/' + lang + '/levels/', lvl);
+                getCall('languages/' + lang + '/levels/', lvl, pdffile, zip_f);
             } else if (lang !== null && lvl !== null && course !== null && unit === null) {
-                getCall('comalat/languages/' + lang + '/levels/' + lvl + '/courses/', course);
+                getCall('languages/' + lang + '/levels/' + lvl + '/courses/', course, pdffile, zip_f);
             } else if (lang !== null && lvl !== null && course !== null && unit !== null) {
-                getCall('comalat/languages/' + lang + '/levels/' + lvl + '/courses/' + course + '/units/', unit);
+                getCall('languages/' + lang + '/levels/' + lvl + '/courses/' + course + '/units/', unit, pdffile, pdf_f);
             }
         };
 
-        var getCall = function (url, name) {
-            var res = getData.getFilefromServer(url, name);
+        var getCall = function (url, name, pdffilename, format) {
+            var res = getData.getFilefromServer(url, name, pdffilename, format);
             res.then(
                     function (response) {
+                        console.log("GET FILE FROM SERVER RESPONSE STATUS: " + response.status);
                         if (response.status !== 200) {
                             //console.log("GET " + name + " FILE ERROR: " + response.data.message);
                             if (response.data.message !== undefined) {
@@ -288,13 +292,13 @@ app.controller('APICtrl', ['$scope', '$rootScope', '$timeout', '$http', 'getData
             $scope.dataloading = true;
             //console.log("deleteMethod: lang= " + lang + " lvl= " + lvl + " course= " + course + " unit= " + unit);
             if (lang !== null && lvl === null) {
-                deleteCall('comalat/languages/', lang);
+                deleteCall('languages/', lang);
             } else if (lang !== null && lvl !== null && course === null) {
-                deleteCall('comalat/languages/' + lang + '/levels/', lvl);
+                deleteCall('languages/' + lang + '/levels/', lvl);
             } else if (lang !== null && lvl !== null && course !== null && unit === null) {
-                deleteCall('comalat/languages/' + lang + '/levels/' + lvl + '/courses/', course);
+                deleteCall('languages/' + lang + '/levels/' + lvl + '/courses/', course);
             } else if (lang !== null && lvl !== null && course !== null && unit !== null) {
-                deleteCall('comalat/languages/' + lang + '/levels/' + lvl + '/courses/' + course + '/units/', unit);
+                deleteCall('languages/' + lang + '/levels/' + lvl + '/courses/' + course + '/units/', unit);
             }
         };
 
@@ -302,6 +306,7 @@ app.controller('APICtrl', ['$scope', '$rootScope', '$timeout', '$http', 'getData
             var res = deleteFile.deleteFilefromServer(url, name);
             res.then(
                     function (response) {
+                        console.log("DELETE FILE FROM SERVER RESPONSE STATUS: " + response.status);
                         //console.log("deleteMethod: " + name + " status: " + response.status);
                         if (response.status !== 200) {
                             if (response.data.message !== undefined) {
@@ -331,20 +336,20 @@ app.controller('APICtrl', ['$scope', '$rootScope', '$timeout', '$http', 'getData
             if (lang === null) {
                 //console.log("Post new Language");
                 $scope.objName = "Language";
-                uploadURL = 'comalat/languages/';
+                uploadURL = 'languages/';
             } else if (lang !== null && lvl === null) {
                 //console.log("Post new Education Level");
                 $scope.objName = "Education Level";
-                uploadURL = 'comalat/languages/' + lang + '/levels/';
+                uploadURL = 'languages/' + lang + '/levels/';
             } else if (lang !== null && lvl !== null && course === null) {
                 //console.log("Post new Course");
                 $scope.objName = "Course";
-                uploadURL = 'comalat/languages/' + lang + '/levels/' + lvl + '/courses/';
+                uploadURL = 'languages/' + lang + '/levels/' + lvl + '/courses/';
             } else if (lang !== null && lvl !== null && course !== null) {
                 //console.log("Post new Unit");
                 $scope.objName = "Unit";
                 $scope.format = '.pdf';
-                uploadURL = 'comalat/languages/' + lang + '/levels/' + lvl + '/courses/' + course + '/units/';
+                uploadURL = 'languages/' + lang + '/levels/' + lvl + '/courses/' + course + '/units/';
             }
         };
 
@@ -359,23 +364,23 @@ app.controller('APICtrl', ['$scope', '$rootScope', '$timeout', '$http', 'getData
                 //console.log("putMethod: Language = " + lang);
                 $scope.name = lang;
                 $scope.objName = "Language";
-                uploadURL = 'comalat/languages/';
+                uploadURL = 'languages/';
             } else if (lang !== null && lvl !== null && course === null) {
                 //console.log("putMethod: Level = " + lvl);
                 $scope.name = lvl;
                 $scope.objName = "Education Level";
-                uploadURL = 'comalat/languages/' + lang + '/levels/';
+                uploadURL = 'languages/' + lang + '/levels/';
             } else if (lang !== null && lvl !== null && course !== null && unit === null) {
                 //console.log("putMethod: Courses = " + course);
                 $scope.name = course;
                 $scope.objName = "Course";
-                uploadURL = 'comalat/languages/' + lang + '/levels/' + lvl + '/courses/';
+                uploadURL = 'languages/' + lang + '/levels/' + lvl + '/courses/';
             } else if (lang !== null && lvl !== null && course !== null && unit !== null) {
                 //console.log("putMethod: Units = " + unit);
                 $scope.name = unit;
                 $scope.objName = "Unit";
                 $scope.format = '.pdf';
-                uploadURL = 'comalat/languages/' + lang + '/levels/' + lvl + '/courses/' + course + '/units/';
+                uploadURL = 'languages/' + lang + '/levels/' + lvl + '/courses/' + course + '/units/';
             }
         };
 
@@ -388,10 +393,10 @@ app.controller('APICtrl', ['$scope', '$rootScope', '$timeout', '$http', 'getData
             if (file !== null) {
                 if ($scope.action_method === "Upload") {
                     //console.log("Upload");
-                    var res = uploadFile.uploadFiletoServer(file, name, uploadURL);
+                    var res = uploadFile.uploadFiletoServer(file, name, uploadURL);                  
                     res.then(
                             function (response) {
-                                //console.log("UploadMethod: DONE: " + response.status + "  " + response.data.message);
+                                console.log("UPLOAD FILE TO SERVER RESPONSE STATUS: " + response.status);
                                 angular.element('#myModal').modal('hide');
                                 $scope.datamodalloading = false;
                                 if (response.status !== 201) {
@@ -415,7 +420,7 @@ app.controller('APICtrl', ['$scope', '$rootScope', '$timeout', '$http', 'getData
                     var res = uploadFile.updateFiletoServer(file, name, uploadURL);
                     res.then(
                             function (response) {
-                                ///console.log("UpdateMethod: DONE: " + response.status + "  " + response.data.message);
+                                console.log("UPDATE FILE TO SERVER RESPONSE STATUS: " + response.status);
                                 angular.element('#myModal').modal('hide');
                                 $scope.datamodalloading = false;
                                 if (response.status !== 200) {

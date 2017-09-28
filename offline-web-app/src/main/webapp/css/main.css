@@ -8,13 +8,14 @@
 }
 
 #loginPanel {
-    position: absolute;
+    position: fixed;
     margin: 0px;
     padding: 0px;
-    top: 30%;
-    right: 35%;
+    top: 25%;
+    right: 25%;
+    left: 25%;
     height: 50%;
-    width: 30%;
+    width: 50%;
 }
 
 #loginPanel input {

@@ -15,7 +15,7 @@
                     <span class=" text-capitalize fa fa-graduation-cap fa-2x" aria-hidden="true"> {{ language.Language}}</span>
                     <div class="CRUD">
                         <i data-toggle="tooltip" data-placement="top" title="Download">
-                            <span class="get fa fa-download" aria-hidden="true" ng-click="getMethod(language.Language, null, null, null)"></span></i>
+                            <span class="get fa fa-download" aria-hidden="true" ng-click="getMethod(language.Language, null, null, null, null)"></span></i>
                         <i data-toggle="tooltip" data-placement="top" title="Delete">
                             <span class="delete fa fa-trash-o" aria-hidden="true" ng-confirm-click="Are you sure to delete language {{language.Language}}?" confirmed-click="deleteMethod(language.Language, null, null, null)"></span></i>
                         <i data-toggle="tooltip" data-placement="top" title="Update">
@@ -51,7 +51,7 @@
                                         <strong>{{level.EducationLevel}}</strong>
                                         <div class="CRUD">
                                             <i data-toggle="tooltip" data-placement="top" title="Download">
-                                                <span class="get fa fa-download" aria-hidden="true" ng-click="getMethod(language.Language, level.EducationLevel, null, null)"></span></i>
+                                                <span class="get fa fa-download" aria-hidden="true" ng-click="getMethod(language.Language, level.EducationLevel, null, null, null)"></span></i>
                                             <i data-toggle="tooltip" data-placement="top" title="Delete">
                                                 <span class="delete fa fa-trash-o" aria-hidden="true" ng-confirm-click="Are you sure to delete education level {{level.EducationLevel}}?" confirmed-click="deleteMethod(language.Language, level.EducationLevel, null, null)"></span></i>
                                             <i data-toggle="tooltip" data-placement="top" title="Update">
@@ -64,7 +64,7 @@
                                                 <span class="fa fa-level-down fa-2x" aria-hidden="true"></span><strong>{{course.Course}}</strong>
                                                 <div class="CRUD">
                                                     <i data-toggle="tooltip" data-placement="top" title="Download">
-                                                        <span class="get fa fa-download" aria-hidden="true" ng-click="getMethod(language.Language, level.EducationLevel, course.Course, null)"></span></i>
+                                                        <span class="get fa fa-download" aria-hidden="true" ng-click="getMethod(language.Language, level.EducationLevel, course.Course, null, null)"></span></i>
                                                     <i data-toggle="tooltip" data-placement="top" title="Delete">
                                                         <span class="delete fa fa-trash-o" aria-hidden="true" ng-confirm-click="Are you sure to delete courses {{course.Course}}?" confirmed-click="deleteMethod(language.Language, level.EducationLevel, course.Course, null)"></span></i>
                                                     <i data-toggle="tooltip" data-placement="top" title="Update">
@@ -77,7 +77,7 @@
                                                         <span class="fa fa-level-down" aria-hidden="true"></span><strong>{{unit.Unit}}</strong> <small>({{unit.size| KiloByte}} KB)</small>
                                                         <div class="CRUD">
                                                             <i data-toggle="tooltip" data-placement="top" title="Download">
-                                                                <span class="get fa fa-download" aria-hidden="true" ng-click="getMethod(language.Language, level.EducationLevel, course.Course, unit.Unit)"></span></i>
+                                                                <span class="get fa fa-download" aria-hidden="true" ng-click="getMethod(language.Language, level.EducationLevel, course.Course, unit.Unit, unit.File)"></span></i>
                                                             <i data-toggle="tooltip" data-placement="top" title="Delete">
                                                                 <span class="delete fa fa-trash-o" aria-hidden="true" ng-confirm-click="Are you sure to delete unit {{unit.Unit}}?" confirmed-click="deleteMethod(language.Language, level.EducationLevel, course.Course, unit.Unit)"></span></i>
                                                             <i data-toggle="tooltip" data-placement="top" title="Update">

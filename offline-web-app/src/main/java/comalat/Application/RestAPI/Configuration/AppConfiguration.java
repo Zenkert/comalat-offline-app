@@ -9,7 +9,7 @@ import javax.ws.rs.core.Application;
  *
  * @author SyleSakis
  */
-@ApplicationPath("comalat")
+@ApplicationPath("restAPI")
 public class AppConfiguration extends Application {
 
     @Override

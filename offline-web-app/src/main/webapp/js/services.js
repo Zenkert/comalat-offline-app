@@ -1,14 +1,33 @@
 
-app.service('AuthorizationService', ['Base64', '$cookieStore', '$rootScope', '$http', '$location',
-    function (Base64, $cookieStore, $rootScope, $http, $location) {
-        var baseURL = $location.$$absUrl.replace($location.$$url, '').replace('#!', '');
-        
+app.factory('RestURL', ['$location',
+    function ($location) {
+        var _baseURL = $location.absUrl();
+
+        return {
+            baseURL: function () {
+                var n = _baseURL.indexOf("#");
+                if (n === -1) {
+                    n = _baseURL.length;
+                }
+                return _baseURL.substring(0, n);
+            },
+
+            restAPI: 'restAPI/'
+        };
+    }
+]);
+
+app.service('AuthorizationService', ['Base64', '$cookieStore', '$rootScope', '$http', 'RestURL',
+    function (Base64, $cookieStore, $rootScope, $http, RestURL) {
+
+        // login
         this.Login = function (username, password) {
             var fd = new FormData();
             fd.append("username", username);
             fd.append("password", password);
 
-            return $http.post(baseURL + 'comalat/login', fd, {
+            console.log('post User: ' + RestURL.baseURL() + RestURL.restAPI + 'login');
+            return $http.post(RestURL.baseURL() + RestURL.restAPI + 'login', fd, {
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}
             }).then(
@@ -21,14 +40,16 @@ app.service('AuthorizationService', ['Base64', '$cookieStore', '$rootScope', '$h
                         return response;
                     });
         };
-        
+
+        // edit
         this.Edit = function (username, password, fullname) {
             var fd = new FormData();
             fd.append("username", username);
             fd.append("password", password);
             fd.append("fullname", fullname);
 
-            return $http.put(baseURL + 'comalat/login', fd, {
+            console.log('put User: ' + RestURL.baseURL() + RestURL.restAPI + 'login');
+            return $http.put(RestURL.baseURL() + RestURL.restAPI + 'login', fd, {
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}
             }).then(
@@ -63,11 +84,11 @@ app.service('AuthorizationService', ['Base64', '$cookieStore', '$rootScope', '$h
         };
     }]);
 
-app.service('getData', ['$http', '$location', function ($http, $location) {
-        var baseURL = $location.$$absUrl.replace($location.$$url, '').replace('#!', '');
+app.service('getData', ['$http', 'RestURL', function ($http, RestURL) {
+        // GET DATA ../data
         this.getDatafromServer = function () {
-            console.log('URL ' + baseURL);
-            return $http.get(baseURL + 'comalat/data').then(
+            console.log('get Data URL: ' + RestURL.baseURL() + RestURL.restAPI + 'data');
+            return $http.get(RestURL.baseURL() + RestURL.restAPI + 'data').then(
                     function (response) {
                         //console.log("GET DATA SERVICE OK");
                         return response;
@@ -78,15 +99,21 @@ app.service('getData', ['$http', '$location', function ($http, $location) {
                     });
         };
 
-        this.getFilefromServer = function (url, name) {
+        // get File 
+        // ../languages/{lang}
+        // ../languages/{lang}/levels/{lvl}
+        // ../languages/{lang}/levels/{lvl}/courses/{courseXY}
+        // ../languages/{lang}/levels/{lvl}/courses/{courseXY}/units/{unit}
+        this.getFilefromServer = function (url, name, filename, format) {
+            console.log('get File URL: ' + RestURL.baseURL() + RestURL.restAPI + url + name);
             var config = {
                 responseType: "arraybuffer",
                 transformResponse: jsonBufferToObject
             };
-            return $http.get(baseURL + url + name, config).then(
+            return $http.get(RestURL.baseURL() + RestURL.restAPI + url + name, config).then(
                     function (response) {
                         //console.log("GET FILE SERVICE OK");
-                        success(response, name);
+                        success(response, name, filename, format);
                         return response;
                     },
                     function (response) {
@@ -97,10 +124,15 @@ app.service('getData', ['$http', '$location', function ($http, $location) {
 
     }]);
 
-app.service('deleteFile', ['$http', '$location', function ($http, $location) {
-        var baseURL = $location.$$absUrl.replace($location.$$url, '').replace('#!', '');
+app.service('deleteFile', ['$http', 'RestURL', function ($http, RestURL) {
+        // delete File 
+        // ../languages/{lang}
+        // ../languages/{lang}/levels/{lvl}
+        // ../languages/{lang}/levels/{lvl}/courses/{courseXY}
+        // ../languages/{lang}/levels/{lvl}/courses/{courseXY}/units/{unit}
         this.deleteFilefromServer = function (url, name) {
-            return $http.delete(baseURL + url + name).then(
+            console.log('delete File URL: ' + RestURL.baseURL() + RestURL.restAPI + url + name);
+            return $http.delete(RestURL.baseURL() + RestURL.restAPI + url + name).then(
                     function (response) {
                         //console.log("DELETE DATA SERVICE OK");
                         return response;
@@ -112,15 +144,20 @@ app.service('deleteFile', ['$http', '$location', function ($http, $location) {
         }
     }]);
 
-app.service('uploadFile', ['$http', '$location', function ($http, $location) {
-        var baseURL = $location.$$absUrl.replace($location.$$url, '').replace('#!', '');
+app.service('uploadFile', ['$http', 'RestURL', function ($http, RestURL) {
+        // upload File 
+        // ../languages/upload
+        // ../languages/{lang}/levels/upload
+        // ../languages/{lang}/levels/{lvl}/courses/upload
+        // ../languages/{lang}/levels/{lvl}/courses/{courseXY}/units/upload
         this.uploadFiletoServer = function (file, name, url) {
             var fd = new FormData();
 
             fd.append('uploadFile', file);
             fd.append('name', name);
 
-            return $http.post(baseURL + url + 'upload', fd, {
+            console.log('upload File URL: ' + RestURL.baseURL() + RestURL.restAPI + url + 'upload');
+            return $http.post(RestURL.baseURL() + RestURL.restAPI + url + 'upload', fd, {
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}
             }).then(
@@ -134,13 +171,19 @@ app.service('uploadFile', ['$http', '$location', function ($http, $location) {
                     });
         };
 
+        // update File 
+        // ../languages/update
+        // ../languages/{lang}/levels/update
+        // ../languages/{lang}/levels/{lvl}/courses/update
+        // ../languages/{lang}/levels/{lvl}/courses/{courseXY}/units/update
         this.updateFiletoServer = function (file, name, url) {
             var fd = new FormData();
 
             fd.append('uploadFile', file);
             fd.append('name', name);
 
-            return $http.put(baseURL + url + 'update', fd, {
+            console.log('update File URL: ' + RestURL.baseURL() + RestURL.restAPI + url + 'update');
+            return $http.put(RestURL.baseURL() + RestURL.restAPI + url + 'update', fd, {
                 transformRequest: angular.identity,
                 headers: {'Content-Type': undefined}
             }).then(
@@ -166,17 +209,17 @@ app.run(['$rootScope', '$cookieStore', '$http',
         }
     }]);
 
-var success = function (response, name) {
+var success = function (response, name, filename, format) {
     {
-        console.log("OK " + response.headers('Content-Type'));
         var contentType = response.headers('Content-Type');
         var zipfilename = response.headers('x-zipfilename');
+        //var pdffilename = response.headers('x-pdffilename');
         var pdffilename = response.headers('x-pdffilename');
-        var format = response.headers('x-fileformat');
+        //var format = response.headers('x-fileformat');
         var linkElement = document.createElement('a');
 
-        if (pdffilename !== null) {
-            name = pdffilename;
+        if (format === '.pdf') {
+            name = filename;
         } else {
             name = name + format;
         }
